@@ -248,7 +248,7 @@ export class podcastPlayer {
             galleryItem.setAttribute('class', this.galleryItemClass)
             galleryItem.setAttribute('timePoint', data[index].timePoint)
 
-            let galleryImg = document.createElement('img')
+            let galleryImg = new Image()
             galleryImg.setAttribute('src', data[index].imgUrl)
 
             galleryItem.appendChild(galleryImg)

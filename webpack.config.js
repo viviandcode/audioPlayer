@@ -10,14 +10,14 @@ module.exports = {
     },
     mode: 'development', // 开发模式, 生产模式 'production' 会压缩代码
     module: { // 加载 css less
-        rules: [ 
+        rules: [
             {
                 test: /\.css$/, // js 中 require css
                 use: ['style-loader','css-loader']
             },
             { 
                 test: /\.less$/, 
-                use: ['less-loader','style-loader','css-loader'] 
+                use: ['style-loader','css-loader','less-loader'] 
             },
             {
                 test: /\.m?js$/,
@@ -33,7 +33,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(png|jpe?g|gif|m4a)$/, // 加载js img 对象, css 中的图片
+                test: /\.(png|jpe?g|gif|m4a)$/, // 加载js img 对象、css 中的图片、音频等资源
                 use: [
                     {
                         loader: 'url-loader',

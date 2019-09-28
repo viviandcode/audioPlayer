@@ -1,3 +1,6 @@
+require('@babel/polyfill')
+require('./style.less')
+
 let data = [
   {
     timePoint: 0,
@@ -20,8 +23,6 @@ let data = [
     imgUrl: '4.jpg'
   }
 ]
-
-require('./style.css')
 
 import { podcastPlayer }  from "./audioPlay.js"
 

@@ -1,10 +1,6 @@
-export class AudioPlayer {
+export class podcastPlayer {
     // 初始化, 传入 audio 标签的 id
-    constructor({ id, src,  updateTimer, loop }) {
-        this.updateStep = 10
-        this.playIcon = '>'
-        this.pauseIcon = 'II'
-
+    constructor({ id, src, playIcon, pauseIcon, updateTimer, loop }) {
         // 加载标示
         this.timerLoad = false
         this.timelineLoad = false
@@ -15,18 +11,11 @@ export class AudioPlayer {
             console.warn('初始化: 没有传入 id!')
             return false
         }
-        this.wrap = document.getElementById(id)
+        this.player = document.getElementById(id)
 
         // 创建 audio 元素
         this.audio = document.createElement('audio')
         this.audio.setAttribute('class', 'audio')
-
-        // 向 div#wrap 中添加 audio 对象
-        this.wrap.appendChild(this.audio)
-
-        // 初始化播放按钮
-        this.playButton()
-        this.wrap.insertBefore(this.playButton, this.audio)
 
         // 如果传入 src 则初始化
         if (src !== undefined && src !== '') {
@@ -36,12 +25,32 @@ export class AudioPlayer {
         // 如果传入 updateTimer 则初始化, 默认 20 毫秒
         if (updateTimer !== undefined && updateTimer !== 0) {
             this.updateStep = updateTimer
+        } else {
+            this.updateStep = 20
         }
 
         // 是否循环播放, 默认不循环
         if (loop !== undefined && loop === true) {
             this.audio.loop = true
         }
+
+        if (playIcon !== undefined && playIcon !== '') {
+            this.playIcon = playIcon
+        } else {
+            this.playIcon = '>'
+        }
+        if (pauseIcon !== undefined && pauseIcon !== '') {
+            this.pauseIcon = pauseIcon
+        } else {
+            this.pauseIcon = 'II'
+        }
+
+        // 向 player 中添加 audio 对象
+        this.player.appendChild(this.audio)
+
+        // 初始化播放按钮, 至少有一个这个吧
+        this.playButton()
+        this.player.insertBefore(this.playButton, this.audio)
 
         this.watchPlay()
     }
@@ -62,16 +71,6 @@ export class AudioPlayer {
     }
     get loop () {
         return this.audio.loop
-    }
-
-    // 播放按钮图标设置快捷借口
-    icon ({ playIcon, pauseIcon }) {
-        if (play !== undefined && play !== '') {
-            this.playIcon = playIcon
-        }
-        if (pause !== undefined && pause !== '') {
-            this.pauseIcon = pauseIcon
-        }
     }
 
     // 给 audio 添加统一的 play 事件监控
@@ -147,7 +146,7 @@ export class AudioPlayer {
 
         this.timer.appendChild(current)
         this.timer.appendChild(duration)
-        this.wrap.insertBefore(this.timer, this.audio)
+        this.player.insertBefore(this.timer, this.audio)
     }
 
     // 加载时间轴
@@ -166,7 +165,7 @@ export class AudioPlayer {
 
         this.timeline.appendChild(progressBar)
         this.timeline.appendChild(dot)
-        this.wrap.insertBefore(this.timeline, this.timer)
+        this.player.insertBefore(this.timeline, this.timer)
 
         this.mouseClickProgressBar(dot, progressBar)
         this.mouseMoveDot(dot, progressBar)
@@ -262,7 +261,7 @@ export class AudioPlayer {
             this.gallery.appendChild(galleryItem)
         }
 
-        this.wrap.insertBefore(this.gallery, this.playButton)
+        this.player.insertBefore(this.gallery, this.playButton)
 
         let galleryItems = this.gallery.children
         // 初始化 gallery 需显示的时间点, 默认选中第一个

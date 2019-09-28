@@ -17,8 +17,6 @@ html, body {
     overflow: hidden;
 }
 .gallery-wrap .gallery-item {
-    /* float: left;
-    width: 200px; */
     display: none;
     width: 100%;
 }

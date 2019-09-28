@@ -23,11 +23,13 @@ let data = [
 
 require('./style.css')
 
-import { AudioPlayer }  from "./audioPlay.js"
+import { podcastPlayer }  from "./audioPlay.js"
 
-let audio = new AudioPlayer({
+let audio = new podcastPlayer({
   id: 'myaudio',
   // src: 'example.m4a',
+  playIcon: '<i class="fa fa-play" aria-hidden="true"></i>',
+  pauseIcon: '<i class="fa fa-pause" aria-hidden="true"></i>',
   updateTimer: 10
 })
 audio.src = 'example.m4a'

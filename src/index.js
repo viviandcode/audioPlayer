@@ -34,7 +34,7 @@ audio.src = 'example.m4a'
 audio.timer()
 audio.timeline()
 audio.gallery({
-  data: data,
-  itemClass: '',
-  activeClass: ''
+  data: data
+  // itemClass: 'gallery-item',
+  // activeClass: 'active'
 })

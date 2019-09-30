@@ -13,19 +13,7 @@ html, body {
 .height-full {
     height: 100%;
 }
-.gallery-wrap {
-    overflow: hidden;
-    .gallery-item {
-        display: none;
-        width: 100%;
-        &.active {
-            display: inline-block;
-        }
-        img {
-            width: 100%;
-        }
-    }
-}
+
 
 .play-button {
     cursor: pointer;
@@ -46,5 +34,36 @@ html, body {
         background-color: red;
         cursor: col-resize;
         transform: translateX(-50%)
+    }
+}
+.gallery-wrap {
+    overflow: hidden;
+    .gallery-item {
+        display: none;
+        width: 100%;
+        &.active {
+            display: inline-block;
+        }
+        img {
+            width: 100%;
+            height: 500px;
+        }
+    }
+}
+.short-cuts {
+    width: 100%;
+    border: 1px solid red;
+    overflow: hidden;
+    .short-cut-wrap {
+        margin-left: 50%;
+        .short-cut-progress{
+            position: relative;
+            .short-cut-item {
+                float: left;
+                position: relative;
+                border: 1px solid #000000;
+                cursor: pointer;
+            }
+        }
     }
 }

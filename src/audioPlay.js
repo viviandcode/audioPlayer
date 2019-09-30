@@ -5,6 +5,7 @@ export class podcastPlayer {
         this.timerLoad = false
         this.timelineLoad = false
         this.galleryLoad = false
+        this.shortcutsLoad = false
 
         // wrap 对象
         if (id === undefined || id === '') {
@@ -32,6 +33,8 @@ export class podcastPlayer {
         // 是否循环播放, 默认不循环
         if (loop !== undefined && loop === true) {
             this.audio.loop = true
+        } else {
+            this.audio.loop = false
         }
 
         if (playIcon !== undefined && playIcon !== '') {
@@ -100,6 +103,11 @@ export class podcastPlayer {
                 // gallery 查找并更新元素
                 if (this.galleryLoad) {
                     this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
+                }
+
+                // shortcuts
+                if (this.shortcutsLoad) {
+                    this.shortcutsViewProgress()
                 }
             }, this.updateStep)
         })
@@ -246,18 +254,12 @@ export class podcastPlayer {
         for (let index = 0; index < data.length; index++) {
             let galleryItem = document.createElement('figure')
             galleryItem.setAttribute('class', this.galleryItemClass)
-            galleryItem.setAttribute('timePoint', data[index].timePoint)
+            galleryItem.setAttribute('time-point', data[index].timePoint)
 
             let galleryImg = new Image()
             galleryImg.setAttribute('src', data[index].imgUrl)
 
             galleryItem.appendChild(galleryImg)
-
-            // galleryItem.addEventListener('click', () => {
-            //     this.audio.currentTime = data[index].timePoint
-            //     this.audio.play()
-            // })
-
             this.gallery.appendChild(galleryItem)
         }
 
@@ -266,7 +268,7 @@ export class podcastPlayer {
         let galleryItems = this.gallery.children
         // 初始化 gallery 需显示的时间点, 默认选中第一个
         this.gallerySelectIndex = 0
-        this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('timePoint')
+        this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('time-point')
         galleryItems[this.gallerySelectIndex].setAttribute('class', this.galleryItemClass + ' ' + this.galleryActiveClass)
     }
 
@@ -279,14 +281,14 @@ export class podcastPlayer {
         let nextTimePoint
         if (this.gallerySelectIndex < lastIndex) {
             let nextIndex = this.gallerySelectIndex + 1
-            nextTimePoint = galleryItems[nextIndex].getAttribute('timePoint')
+            nextTimePoint = galleryItems[nextIndex].getAttribute('time-point')
         }
 
         // 如果当前播放时间不在 selectItem 时间范围 [gallerySelectTimePoint, nextTimePoint), 则查找
         if (this.audio.currentTime < this.gallerySelectTimePoint || this.audio.currentTime >= nextTimePoint) {
             // 遍历 galleryItems 并查找
             for (let index = 0; index < galleryItems.length; index++) {
-                let timePoint = galleryItems[index].getAttribute('timePoint')
+                let timePoint = galleryItems[index].getAttribute('time-point')
 
                 // 先把所有子元素 class 赋值为未选中状态
                 galleryItems[index].setAttribute('class', itemClass)
@@ -299,8 +301,58 @@ export class podcastPlayer {
 
             // 更新 gallerySelectTimePoint
             galleryItems[this.gallerySelectIndex].setAttribute('class', itemClass + ' ' + activeClass)
-            this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('timePoint')
+            this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('time-point')
         }
+    }
+
+    // 有标签的时间轴
+    shortcutsView ({ data, shortcutItemClass }) {
+        this.shortcutsLoad = true
+        if (shortcutItemClass === undefined || shortcutItemClass === '') {
+            this.shortcutItemClass = 'short-cut-item'
+        } else {
+            this.shortcutItemClass = shortcutItemClass
+        }
+
+        let progressDistance = 1.6666666666
+
+        this.shortcutsView = document.createElement('div')
+        this.shortcutsView.setAttribute('class', 'short-cuts')
+
+        let wrap = document.createElement('div')
+        wrap.setAttribute('class', 'short-cut-wrap')
+
+        let progress = document.createElement('div')
+        progress.setAttribute('class', 'short-cut-progress')
+
+        for (let index = 0; index < data.length; index++) {
+            let shortcutItem = document.createElement('figure')
+            shortcutItem.setAttribute('class', this.shortcutItemClass)
+            shortcutItem.setAttribute('time-point', data[index].timePoint)
+            // 默认 1 毫秒 为 1.6666666px
+            shortcutItem.setAttribute('style', 'left:' + data[index].timePoint * progressDistance + 'px')
+
+            let title = document.createElement('div')
+            title.innerText = data[index].title
+
+            shortcutItem.appendChild(title)
+
+            shortcutItem.addEventListener('click', () => {
+                this.audio.currentTime = data[index].timePoint
+                this.audio.play()
+            })
+
+            progress.appendChild(shortcutItem)
+        }
+
+        wrap.appendChild(progress)
+        this.shortcutsView.appendChild(wrap)
+
+        this.player.insertBefore(this.shortcutsView, this.playButton)
+    }
+    shortcutsViewProgress () {
+        let progressDistance = 1.6666666666
+        this.shortcutsView.firstElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * progressDistance +'px);')
     }
 }
 

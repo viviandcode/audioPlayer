@@ -5,7 +5,7 @@ export class podcastPlayer {
         this.timerLoad = false
         this.timelineLoad = false
         this.galleryLoad = false
-        this.shortcutsLoad = false
+        this.tagLineLoad = false
 
         // wrap 对象
         if (id === undefined || id === '') {
@@ -106,8 +106,8 @@ export class podcastPlayer {
                 }
 
                 // shortcuts
-                if (this.shortcutsLoad) {
-                    this.shortcutsViewProgress()
+                if (this.tagLineLoad) {
+                    this.tagLineProgress()
                 }
             }, this.updateStep)
         })
@@ -213,6 +213,9 @@ export class podcastPlayer {
                 if (this.galleryLoad) {
                     this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
                 }
+                if (this.tagLineLoad) {
+                    this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px);')
+                }
 				return false
             }
         }
@@ -228,6 +231,9 @@ export class podcastPlayer {
             }
             if (this.galleryLoad) {
                 this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
+            }
+            if (this.tagLineLoad) {
+                this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px);')
             }
         })
     }
@@ -306,53 +312,105 @@ export class podcastPlayer {
     }
 
     // 有标签的时间轴
-    shortcutsView ({ data, shortcutItemClass }) {
-        this.shortcutsLoad = true
-        if (shortcutItemClass === undefined || shortcutItemClass === '') {
-            this.shortcutItemClass = 'short-cut-item'
+    // 结构
+    // div.short-cuts
+    //   div.short-cuts-wrap
+    //     div.short-cuts-progress
+    //       div.short-cut-item ...
+    tagLine ({ data, tagItemClass, progressDistance }) {
+        // tagLine 加载标示更新为 true
+        this.tagLineLoad = true
+
+        if (tagItemClass === undefined || tagItemClass === '') {
+            this.tagItemClass = 'tag-line-item'
         } else {
-            this.shortcutItemClass = shortcutItemClass
+            this.tagItemClass = tagItemClass
         }
 
-        let progressDistance = 1.6666666666
+        // 默认 1 毫秒 为 1.6666666px
+        if (progressDistance === undefined || progressDistance === 0) {
+            this.progressDistance = 1.6666666666
+        } else {
+            this.progressDistance = progressDistance
+        }
 
-        this.shortcutsView = document.createElement('div')
-        this.shortcutsView.setAttribute('class', 'short-cuts')
+        this.tagLine = document.createElement('div')
+        this.tagLine.setAttribute('class', 'tag-line')
 
         let wrap = document.createElement('div')
-        wrap.setAttribute('class', 'short-cut-wrap')
+        wrap.setAttribute('class', 'tag-line-wrap')
 
         let progress = document.createElement('div')
-        progress.setAttribute('class', 'short-cut-progress')
+        progress.setAttribute('class', 'tag-line-progress')
 
         for (let index = 0; index < data.length; index++) {
-            let shortcutItem = document.createElement('figure')
-            shortcutItem.setAttribute('class', this.shortcutItemClass)
-            shortcutItem.setAttribute('time-point', data[index].timePoint)
-            // 默认 1 毫秒 为 1.6666666px
-            shortcutItem.setAttribute('style', 'left:' + data[index].timePoint * progressDistance + 'px')
+            let item = document.createElement('figure')
+            item.setAttribute('class', this.tagItemClass)
+            item.setAttribute('time-point', data[index].timePoint)
+            item.setAttribute('style', 'left:' + data[index].timePoint * this.progressDistance + 'px')
 
             let title = document.createElement('div')
             title.innerText = data[index].title
 
-            shortcutItem.appendChild(title)
+            item.appendChild(title)
 
-            shortcutItem.addEventListener('click', () => {
+            item.addEventListener('click', () => {
                 this.audio.currentTime = data[index].timePoint
                 this.audio.play()
             })
 
-            progress.appendChild(shortcutItem)
+            progress.appendChild(item)
         }
 
         wrap.appendChild(progress)
-        this.shortcutsView.appendChild(wrap)
 
-        this.player.insertBefore(this.shortcutsView, this.playButton)
+        let midLine = document.createElement('div')
+        midLine.setAttribute('class', 'mid-line')
+
+        this.tagLine.appendChild(midLine)
+        this.tagLine.appendChild(wrap)
+
+        this.player.insertBefore(this.tagLine, this.playButton)
+
+        this.tagLineDrag()
     }
-    shortcutsViewProgress () {
-        let progressDistance = 1.6666666666
-        this.shortcutsView.firstElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * progressDistance +'px);')
+    tagLineProgress () {
+        this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px);')
+    }
+    // 拖动标签时间轴
+    tagLineDrag () {
+        let mouseDownFlag = false
+        let startX
+
+        this.tagLine.onmousedown = e => {
+            mouseDownFlag = true
+            startX = e.clientX
+        }
+        document.onmouseup = () => {
+            mouseDownFlag = false
+        }
+        document.onmousemove = e => {
+            if (mouseDownFlag) {
+                // 当前的坐标
+                let currentX = e.clientX
+                // 将距离减缓 50 倍, 不然太灵敏了
+                let distance = (currentX - startX) / 50
+
+                let timeOffset = - distance / this.progressDistance
+
+                // 更新 audio 播放时间
+                this.audio.currentTime = this.audio.currentTime + timeOffset
+                // 更新偏移量
+                this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px);')
+                
+                if (this.timerLoad) {
+                    this.timer.firstElementChild.innerText = timeFormat(this.audio.currentTime)
+                }
+                if (this.galleryLoad) {
+                    this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
+                }
+            }
+        }
     }
 }
 

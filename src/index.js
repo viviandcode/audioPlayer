@@ -46,7 +46,7 @@ audio.gallery({
   // itemClass: 'gallery-item',
   // activeClass: 'active'
 })
-audio.shortcutsView({
+audio.tagLine({
   data: data,
-  // shortcutItemClass: ''
+  // tagItemClass: ''
 })

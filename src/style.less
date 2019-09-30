@@ -50,15 +50,25 @@ html, body {
         }
     }
 }
-.short-cuts {
+.tag-line {
+    position: relative;
     width: 100%;
+    height: 50px;
     border: 1px solid red;
     overflow: hidden;
-    .short-cut-wrap {
+    cursor: col-resize;
+    .mid-line {
+        position: absolute;
+        left: 50%;
+        width: 2px;
+        height: 100%;
+        background-color: #000000;
+    }
+    .tag-line-wrap {
         margin-left: 50%;
-        .short-cut-progress{
+        .tag-line-progress{
             position: relative;
-            .short-cut-item {
+            .tag-line-item {
                 float: left;
                 position: relative;
                 border: 1px solid #000000;

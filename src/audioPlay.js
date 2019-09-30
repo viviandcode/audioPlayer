@@ -180,26 +180,26 @@ export class podcastPlayer {
     }
 
     // 鼠标移动 dot
-    mouseMoveDot (dragObj, progressBarObj) {
+    mouseMoveDot (dot, progressBarObj) {
         let mouseDownFlag = false
 
-        dragObj.onmousedown = () => {
+        dot.addEventListener('mousedown', () => {
             mouseDownFlag = true
-        }
-        document.onmouseup = () => {
+        })
+        document.addEventListener('mouseup', () => {
             mouseDownFlag = false
-        }
-        document.onmousemove = e => {
+        })
+        document.addEventListener('mousemove', e => {
             if (mouseDownFlag) {
                 // 当前的坐标
                 let currentX = e.clientX
                 let progressBarWidth = progressBarObj.offsetWidth
                 if (currentX < 0) {
-                    dragObj.style.left = "0%"
+                    dot.style.left = "0%"
                 } else if (currentX > progressBarWidth) {
-                    dragObj.style.left = "100%"
+                    dot.style.left = "100%"
                 } else {
-                    dragObj.style.left = currentX / progressBarWidth * 100 + "%"
+                    dot.style.left = currentX / progressBarWidth * 100 + "%"
                 }
 
                 // 更新音频当前播放时间
@@ -208,8 +208,7 @@ export class podcastPlayer {
                 if (this.timerLoad) {
                     this.timer.firstElementChild.innerText = timeFormat(this.audio.currentTime)
                 }
-                // 机核是直接播
-                // this.audio.play()
+                // 机核是直接播放 this.audio.play() , 减少了暂停时的便宜判断
                 if (this.galleryLoad) {
                     this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
                 }
@@ -218,13 +217,13 @@ export class podcastPlayer {
                 }
 				return false
             }
-        }
+        })
     }
 
     // 鼠标点击时间轴
-    mouseClickProgressBar (dragObj, progressBarObj) {
+    mouseClickProgressBar (dot, progressBarObj) {
         progressBarObj.addEventListener('click', e => {
-            dragObj.style.left = e.clientX / progressBarObj.offsetWidth * 100 + "%"
+            dot.style.left = e.clientX / progressBarObj.offsetWidth * 100 + "%"
             this.audio.currentTime = e.clientX / progressBarObj.offsetWidth * this.audio.duration
             if (this.timerLoad) {
                 this.timer.firstElementChild.innerText = timeFormat(this.audio.currentTime)
@@ -312,7 +311,7 @@ export class podcastPlayer {
     }
 
     // 有标签的时间轴
-    // 结构
+    // 结构:
     // div.short-cuts
     //   div.short-cuts-wrap
     //     div.short-cuts-progress
@@ -382,14 +381,14 @@ export class podcastPlayer {
         let mouseDownFlag = false
         let startX
 
-        this.tagLine.onmousedown = e => {
+        this.tagLine.addEventListener('mousedown', e => {
             mouseDownFlag = true
             startX = e.clientX
-        }
-        document.onmouseup = () => {
+        })
+        document.addEventListener('mouseup', e => {
             mouseDownFlag = false
-        }
-        document.onmousemove = e => {
+        })
+        document.addEventListener('mousemove', e => {
             if (mouseDownFlag) {
                 // 当前的坐标
                 let currentX = e.clientX
@@ -406,11 +405,14 @@ export class podcastPlayer {
                 if (this.timerLoad) {
                     this.timer.firstElementChild.innerText = timeFormat(this.audio.currentTime)
                 }
+                if (this.timelineLoad) {
+                    this.timeline.lastElementChild.style.left = this.audio.currentTime / this.audio.duration * 100 + "%"
+                }
                 if (this.galleryLoad) {
                     this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
                 }
             }
-        }
+        })
     }
 }
 

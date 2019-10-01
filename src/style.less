@@ -16,6 +16,7 @@ html, body {
 
 
 .play-button {
+    text-align: center;
     cursor: pointer;
 }
 .timeline {
@@ -36,6 +37,9 @@ html, body {
         transform: translateX(-50%)
     }
 }
+.timer {
+    text-align: center;
+}
 .gallery-wrap {
     overflow: hidden;
     .gallery-item {
@@ -55,7 +59,6 @@ html, body {
     width: 100%;
     height: 50px;
     border: 1px solid red;
-    overflow: hidden;
     cursor: col-resize;
     .mid-line {
         position: absolute;
@@ -69,8 +72,8 @@ html, body {
         .tag-line-progress{
             position: relative;
             .tag-line-item {
-                float: left;
-                position: relative;
+                display: inline-block;
+                position: absolute;
                 border: 1px solid #000000;
                 cursor: pointer;
             }

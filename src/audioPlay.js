@@ -374,7 +374,7 @@ export class podcastPlayer {
         this.tagLineDrag()
     }
     tagLineProgress () {
-        this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px);')
+        this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px)')
     }
     // 拖动标签时间轴
     tagLineDrag () {

@@ -1,3 +1,4 @@
+import { timeFormat } from './utils.js'
 export class podcastPlayer {
     // 初始化, 传入 audio 标签的 id
     constructor({ id, src, playIcon, pauseIcon, updateTimer, loop }) {
@@ -16,7 +17,7 @@ export class podcastPlayer {
 
         // 创建 audio 元素
         this.audio = document.createElement('audio')
-        this.audio.setAttribute('class', 'audio')
+        this.audio.classList.add('audio')
 
         // 如果传入 src 则初始化
         if (src !== undefined && src !== '') {
@@ -121,7 +122,7 @@ export class podcastPlayer {
     // 加载播放按钮
     playButton () {
         this.playButton = document.createElement('div')
-        this.playButton.setAttribute('class', 'play-button')
+        this.playButton.classList.add('play-button')
         this.playButton.innerHTML = this.playIcon
 
         this.playButton.addEventListener('click', () => {
@@ -139,13 +140,13 @@ export class podcastPlayer {
         this.timerLoad = true
 
         this.timer = document.createElement('div')
-        this.timer.setAttribute('class', 'timer')
+        this.timer.classList.add('timer')
 
         let current = document.createElement('div')
-        current.setAttribute('class', 'current')
+        current.classList.add('current')
 
         let duration = document.createElement('div')
-        duration.setAttribute('class', 'duration')
+        duration.classList.add('duration')
 
         this.audio.addEventListener('loadeddata', () => {
             current.innerText = '00:00:00'
@@ -163,13 +164,13 @@ export class podcastPlayer {
         this.timelineLoad = true
 
         this.timeline = document.createElement('div')
-        this.timeline.setAttribute('class', 'timeline')
+        this.timeline.classList.add('timeline')
 
         let progressBar = document.createElement('div')
-        progressBar.setAttribute('class', 'progress-bar')
+        progressBar.classList.add('progress-bar')
 
         let dot = document.createElement('command')
-        dot.setAttribute('class', 'dot')
+        dot.classList.add('dot')
 
         this.timeline.appendChild(progressBar)
         this.timeline.appendChild(dot)
@@ -204,18 +205,7 @@ export class podcastPlayer {
 
                 // 更新音频当前播放时间
                 this.audio.currentTime = currentX / progressBarWidth * this.audio.duration
-                // 暂停状态下, 更新 timer 显示时间
-                if (this.timerLoad) {
-                    this.timer.firstElementChild.innerText = timeFormat(this.audio.currentTime)
-                }
-                // 机核是直接播放 this.audio.play() , 减少了暂停时的便宜判断
-                if (this.galleryLoad) {
-                    this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
-                }
-                if (this.tagLineLoad) {
-                    this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px);')
-                }
-				return false
+                this.audio.play()
             }
         })
     }
@@ -225,15 +215,7 @@ export class podcastPlayer {
         progressBarObj.addEventListener('click', e => {
             dot.style.left = e.clientX / progressBarObj.offsetWidth * 100 + "%"
             this.audio.currentTime = e.clientX / progressBarObj.offsetWidth * this.audio.duration
-            if (this.timerLoad) {
-                this.timer.firstElementChild.innerText = timeFormat(this.audio.currentTime)
-            }
-            if (this.galleryLoad) {
-                this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
-            }
-            if (this.tagLineLoad) {
-                this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px);')
-            }
+            this.audio.play()
         })
     }
 
@@ -254,11 +236,11 @@ export class podcastPlayer {
         }
         
         this.gallery = document.createElement('div')
-        this.gallery.setAttribute('class', 'gallery-wrap')
+        this.gallery.classList.add('gallery-wrap')
 
         for (let index = 0; index < data.length; index++) {
             let galleryItem = document.createElement('figure')
-            galleryItem.setAttribute('class', this.galleryItemClass)
+            galleryItem.className = this.galleryItemClass
             galleryItem.setAttribute('time-point', data[index].timePoint)
 
             let galleryImg = new Image()
@@ -274,7 +256,7 @@ export class podcastPlayer {
         // 初始化 gallery 需显示的时间点, 默认选中第一个
         this.gallerySelectIndex = 0
         this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('time-point')
-        galleryItems[this.gallerySelectIndex].setAttribute('class', this.galleryItemClass + ' ' + this.galleryActiveClass)
+        galleryItems[this.gallerySelectIndex].classList.add(this.galleryItemClass, this.galleryActiveClass)
     }
 
     // gallery 查找并更新元素
@@ -296,7 +278,7 @@ export class podcastPlayer {
                 let timePoint = galleryItems[index].getAttribute('time-point')
 
                 // 先把所有子元素 class 赋值为未选中状态
-                galleryItems[index].setAttribute('class', itemClass)
+                galleryItems[index].className = itemClass
 
                 // 找到最后一个符合范围的 timePoint, 更新 this.gallerySelectIndex
                 if (this.audio.currentTime >=  timePoint) {
@@ -305,7 +287,7 @@ export class podcastPlayer {
             }
 
             // 更新 gallerySelectTimePoint
-            galleryItems[this.gallerySelectIndex].setAttribute('class', itemClass + ' ' + activeClass)
+            galleryItems[this.gallerySelectIndex].classList.add(activeClass)
             this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('time-point')
         }
     }
@@ -334,17 +316,17 @@ export class podcastPlayer {
         }
 
         this.tagLine = document.createElement('div')
-        this.tagLine.setAttribute('class', 'tag-line')
+        this.tagLine.className = 'tag-line'
 
         let wrap = document.createElement('div')
-        wrap.setAttribute('class', 'tag-line-wrap')
+        wrap.className = 'tag-line-wrap'
 
         let progress = document.createElement('div')
-        progress.setAttribute('class', 'tag-line-progress')
+        progress.className = 'tag-line-progress'
 
         for (let index = 0; index < data.length; index++) {
             let item = document.createElement('figure')
-            item.setAttribute('class', this.tagItemClass)
+            item.className = this.tagItemClass
             item.setAttribute('time-point', data[index].timePoint)
             item.setAttribute('style', 'left:' + data[index].timePoint * this.progressDistance + 'px')
 
@@ -364,7 +346,7 @@ export class podcastPlayer {
         wrap.appendChild(progress)
 
         let midLine = document.createElement('div')
-        midLine.setAttribute('class', 'mid-line')
+        midLine.className = 'mid-line'
 
         this.tagLine.appendChild(midLine)
         this.tagLine.appendChild(wrap)
@@ -373,6 +355,7 @@ export class podcastPlayer {
 
         this.tagLineDrag()
     }
+    // 跟随播放时间移动(偏移)
     tagLineProgress () {
         this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px)')
     }
@@ -392,8 +375,8 @@ export class podcastPlayer {
             if (mouseDownFlag) {
                 // 当前的坐标
                 let currentX = e.clientX
-                // 将距离减缓 50 倍, 不然太灵敏了
-                let distance = (currentX - startX) / 50
+                // 将距离减缓 100 倍, 不然太灵敏了
+                let distance = (currentX - startX) / 100
 
                 let timeOffset = - distance / this.progressDistance
 
@@ -401,35 +384,9 @@ export class podcastPlayer {
                 this.audio.currentTime = this.audio.currentTime + timeOffset
                 // 更新偏移量
                 this.tagLine.lastElementChild.firstElementChild.setAttribute('style', 'transform: translateX(-'+ this.audio.currentTime * this.progressDistance +'px);')
-                
-                if (this.timerLoad) {
-                    this.timer.firstElementChild.innerText = timeFormat(this.audio.currentTime)
-                }
-                if (this.timelineLoad) {
-                    this.timeline.lastElementChild.style.left = this.audio.currentTime / this.audio.duration * 100 + "%"
-                }
-                if (this.galleryLoad) {
-                    this.gallerySeekItem(this.gallery.children, this.galleryItemClass, this.galleryActiveClass)
-                }
+                this.audio.play()
             }
         })
     }
 }
 
-// 格式化时间显示
-let timeFormat = time => {
-    let total = Math.round(time)
-    let allHour = parseInt(total / 3600)
-    if (allHour < 10) {
-        allHour = '0' + allHour
-    }
-    let allMin = parseInt(total % 3600 / 60)
-    if (allMin < 10) {
-        allMin = '0' + allMin
-    }
-    let allSec = total % 60
-    if (allSec < 10) {
-        allSec = '0' + allSec
-    }
-    return allHour + ':' + allMin + ':' + allSec
-}

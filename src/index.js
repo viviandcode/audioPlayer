@@ -1,5 +1,5 @@
 require('@babel/polyfill')
-require('./style.less')
+import './style.less'
 
 let data = [
   {

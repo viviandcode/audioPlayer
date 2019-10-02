@@ -1,5 +1,6 @@
 import { timeFormat } from './utils.js'
-export class podcastPlayer {
+
+export default class podcastPlayer {
     // 初始化, 传入 audio 标签的 id
     constructor({ id, src, playIcon, pauseIcon, updateTimer, loop }) {
         // 加载标示
@@ -38,23 +39,8 @@ export class podcastPlayer {
             this.audio.loop = false
         }
 
-        if (playIcon !== undefined && playIcon !== '') {
-            this.playIcon = playIcon
-        } else {
-            this.playIcon = '>'
-        }
-        if (pauseIcon !== undefined && pauseIcon !== '') {
-            this.pauseIcon = pauseIcon
-        } else {
-            this.pauseIcon = 'II'
-        }
-
         // 向 player 中添加 audio 对象
         this.player.appendChild(this.audio)
-
-        // 初始化播放按钮, 至少有一个这个吧
-        this.playButton()
-        this.player.insertBefore(this.playButton, this.audio)
 
         this.watchPlay()
     }
@@ -77,11 +63,16 @@ export class podcastPlayer {
         return this.audio.loop
     }
 
+    // data 快捷借口
+    data (data) {
+        this.data = data
+    }
+
     // 给 audio 添加统一的 play 事件监控
     watchPlay () {
         let setIntervalObj
         this.audio.addEventListener('play', () => {
-            // 切换播放按钮
+            // shift icon
             this.playButton.innerHTML = this.pauseIcon
 
             setIntervalObj = setInterval(() => {
@@ -119,19 +110,74 @@ export class podcastPlayer {
         })
     }
 
-    // 加载播放按钮
-    playButton () {
-        this.playButton = document.createElement('div')
-        this.playButton.classList.add('play-button')
-        this.playButton.innerHTML = this.playIcon
+    // controller buttons
+    controllers ({ playIcon, pauseIcon, backward, backwardIcon, forward, forwardIcon, mode }) {
+        // play button, deafult
+        this.playIcon = '>'
+        this.pauseIcon = '||'
+        if (playIcon !== undefined && playIcon !== '') {
+            this.playIcon = playIcon
+        }
+        if (pauseIcon !== undefined && pauseIcon !== '') {
+            this.pauseIcon = pauseIcon
+        }
 
-        this.playButton.addEventListener('click', () => {
-            if (this.audio.paused) {
-                this.audio.play()
-            } else {
-                this.audio.pause()
+        // backward button
+        if (backward && backwardIcon === undefined || backwardIcon === '') {
+            backwardIcon = '<-'
+        }
+
+        // forward button
+        if (forward && forwardIcon === undefined || forwardIcon === '') {
+            forwardIcon = '->'
+        }
+
+        // default return controller object
+        if (mode === undefined || mode === 'object' || mode === '' || !mode) {
+            this.controllers = {}
+            this.controllers.playIcon =  this.playIcon
+            this.controllers.pauseIcon =  this.pauseIcon
+            if (backward) {
+                this.controllers.backwardIcon = backwardIcon
             }
-        })
+            if (forward) {
+                this.controllers.forwardIcon = forwardIcon
+            }
+            return this.controllers
+        } else {
+            // return HTML
+            let wrap = document.createElement('div')
+            wrap.className = 'controllers'
+
+            // add to {this} for class to change
+            this.playButton = document.createElement('div')
+            this.playButton.className = 'play'
+            this.playButton.innerHTML = this.playIcon
+            this.playButton.addEventListener('click', () => {
+                if (this.audio.paused) {
+                    this.audio.play()
+                } else {
+                    this.audio.pause()
+                }
+            })
+            wrap.appendChild(this.playButton)
+
+            if (backward) {
+                let backwardButton = document.createElement('div')
+                backwardButton.className = 'backward'
+                backwardButton.innerHTML = backwardIcon
+                wrap.insertBefore(backwardButton, this.playButton)
+            }
+
+            if (forward) {
+                let forwardButton = document.createElement('div')
+                forwardButton.className = 'forward'
+                forwardButton.innerHTML = forwardIcon
+                wrap.appendChild(forwardButton)
+            }
+
+            this.player.appendChild(wrap)
+        }
     }
 
     // 加载时间显示
@@ -155,7 +201,7 @@ export class podcastPlayer {
 
         this.timer.appendChild(current)
         this.timer.appendChild(duration)
-        this.player.insertBefore(this.timer, this.audio)
+        this.player.appendChild(this.timer)
     }
 
     // 加载时间轴
@@ -174,7 +220,7 @@ export class podcastPlayer {
 
         this.timeline.appendChild(progressBar)
         this.timeline.appendChild(dot)
-        this.player.insertBefore(this.timeline, this.timer)
+        this.player.appendChild(this.timeline)
 
         this.mouseClickProgressBar(dot, progressBar)
         this.mouseMoveDot(dot, progressBar)
@@ -220,7 +266,7 @@ export class podcastPlayer {
     }
 
     // 加载 Gallery
-    gallery ({ data, itemClass, activeClass }) {
+    gallery ({ itemClass, activeClass }) {
         // gallery 加载标示更新为 true
         this.galleryLoad = true
 
@@ -238,19 +284,19 @@ export class podcastPlayer {
         this.gallery = document.createElement('div')
         this.gallery.classList.add('gallery-wrap')
 
-        for (let index = 0; index < data.length; index++) {
+        for (let index = 0; index < this.data.length; index++) {
             let galleryItem = document.createElement('figure')
             galleryItem.className = this.galleryItemClass
-            galleryItem.setAttribute('time-point', data[index].timePoint)
+            galleryItem.setAttribute('time-point', this.data[index].timePoint)
 
             let galleryImg = new Image()
-            galleryImg.setAttribute('src', data[index].imgUrl)
+            galleryImg.setAttribute('src', this.data[index].imgUrl)
 
             galleryItem.appendChild(galleryImg)
             this.gallery.appendChild(galleryItem)
         }
 
-        this.player.insertBefore(this.gallery, this.playButton)
+        this.player.appendChild(this.gallery)
 
         let galleryItems = this.gallery.children
         // 初始化 gallery 需显示的时间点, 默认选中第一个
@@ -298,7 +344,7 @@ export class podcastPlayer {
     //   div.short-cuts-wrap
     //     div.short-cuts-progress
     //       div.short-cut-item ...
-    tagLine ({ data, tagItemClass, progressDistance }) {
+    tagLine ({ tagItemClass, progressDistance }) {
         // tagLine 加载标示更新为 true
         this.tagLineLoad = true
 
@@ -324,19 +370,19 @@ export class podcastPlayer {
         let progress = document.createElement('div')
         progress.className = 'tag-line-progress'
 
-        for (let index = 0; index < data.length; index++) {
+        for (let index = 0; index < this.data.length; index++) {
             let item = document.createElement('figure')
             item.className = this.tagItemClass
-            item.setAttribute('time-point', data[index].timePoint)
-            item.setAttribute('style', 'left:' + data[index].timePoint * this.progressDistance + 'px')
+            item.setAttribute('time-point', this.data[index].timePoint)
+            item.setAttribute('style', 'left:' + this.data[index].timePoint * this.progressDistance + 'px')
 
             let title = document.createElement('div')
-            title.innerText = data[index].title
+            title.innerText = this.data[index].title
 
             item.appendChild(title)
 
             item.addEventListener('click', () => {
-                this.audio.currentTime = data[index].timePoint
+                this.audio.currentTime = this.data[index].timePoint
                 this.audio.play()
             })
 
@@ -351,7 +397,7 @@ export class podcastPlayer {
         this.tagLine.appendChild(midLine)
         this.tagLine.appendChild(wrap)
 
-        this.player.insertBefore(this.tagLine, this.playButton)
+        this.player.appendChild(this.tagLine)
 
         this.tagLineDrag()
     }

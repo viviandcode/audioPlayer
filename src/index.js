@@ -29,24 +29,29 @@ let data = [
   }
 ]
 
-import { podcastPlayer }  from "./audioPlay.js"
+import podcastPlayer from "./audioPlay.js"
 
 let audio = new podcastPlayer({
   id: 'myaudio',
-  // src: 'example.m4a',
-  playIcon: '<i class="fa fa-play" aria-hidden="true"></i>',
-  pauseIcon: '<i class="fa fa-pause" aria-hidden="true"></i>',
   updateTimer: 10
 })
 audio.src = 'example.m4a'
-audio.timer()
-audio.timeline()
+audio.data(data)
 audio.gallery({
-  data: data
   // itemClass: 'gallery-item',
   // activeClass: 'active'
 })
 audio.tagLine({
-  data: data,
   // tagItemClass: ''
 })
+audio.controllers({
+  mode: 'html',
+  playIcon: '<i class="fa fa-play" aria-hidden="true"></i>',
+  pauseIcon: '<i class="fa fa-pause" aria-hidden="true"></i>',
+  backward: true,
+  backwardIcon: '<i class="fa fa-backward" aria-hidden="true"></i>',
+  forward: true,
+  forwardIcon: '<i class="fa fa-forward" aria-hidden="true"></i>'
+})
+audio.timer()
+audio.timeline()

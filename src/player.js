@@ -2,8 +2,9 @@ import { timeFormat } from './utils.js'
 import { mouseMoveDot, mouseClickProgressBar } from './timeline.js'
 import { galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'
+import { mouseMoveVolumeDot, mouseClickVolumeProgressBar } from './volume.js'
 
-export default class player {
+export default class podcastPlayer {
     constructor({ id, src, updateTimer, loop }) {
         // load flag
         this.timerLoad = false
@@ -43,7 +44,6 @@ export default class player {
         this.watchPlay()
     }
 
-    // src shortcut
     set src (src) {
         this.audio.src = src
     }
@@ -51,7 +51,6 @@ export default class player {
         return this.audio.src
     }
 
-    // loop shortcut
     set loop (loop) {
         if (loop === true) {
             this.audio.loop = true
@@ -59,6 +58,22 @@ export default class player {
     }
     get loop () {
         return this.audio.loop
+    }
+
+    set autoplay (autoplay) {
+        if (autoplay === true) {
+            this.audio.autoplay = true
+        }
+    }
+    get autoplay () {
+        return this.audio.autoplay
+    }
+
+    set volume (volume) {
+            this.audio.volume = volume
+    }
+    get volume () {
+        return this.audio.volume
     }
 
     data (data) {
@@ -121,10 +136,10 @@ export default class player {
     controllers ({ playIcon, pauseIcon, forwardStep, backward, backwardIcon, forward, forwardIcon, mode }) {
         // play button, deafult
         this.playIcon = '&#9658'
-        this.pauseIcon = '&Iota;&Iota;'
         if (playIcon !== undefined && playIcon !== '') {
             this.playIcon = playIcon
         }
+        this.pauseIcon = '&Iota;&Iota;'
         if (pauseIcon !== undefined && pauseIcon !== '') {
             this.pauseIcon = pauseIcon
         }
@@ -206,6 +221,60 @@ export default class player {
         }
     }
 
+    volumeController ({ mode, volumeIcon, muteIcon }) {
+        let _volumeIcon = '&#9836'
+        if (volumeIcon !== undefined && volumeIcon !== '') {
+            _volumeIcon = volumeIcon
+        }
+        let _muteIcon = '&#9834'
+        if (muteIcon !== undefined && muteIcon !== '') {
+            _muteIcon = muteIcon
+        }
+
+        let wrap = document.createElement('div')
+        wrap.className = 'wrap'
+
+        let progressBar = document.createElement('div')
+        progressBar.className = 'progress-bar'
+
+        let dot = document.createElement('command')
+        dot.className = 'dot'
+        dot.style.left = this.audio.volume * 100 + '%'
+
+        let muteButton = document.createElement('div')
+        muteButton.className = 'mute'
+        muteButton.innerHTML = _volumeIcon
+
+        muteButton.addEventListener('click', () => {
+            if (this.audio.muted) {
+                this.audio.muted = false
+                muteButton.innerHTML = _volumeIcon
+            } else {
+                this.audio.muted = true
+                muteButton.innerHTML = _muteIcon
+            }
+        })
+
+        mouseMoveVolumeDot(this.audio, dot, progressBar)
+        mouseClickVolumeProgressBar(this.audio, dot, progressBar)
+
+        if (mode === undefined || mode !== 'render') {
+            this.volumeBox = {}
+            this.volumeBox.progressBar = progressBar
+            this.volumeBox.dot = dot
+            this.volumeBox.muteButton = muteButton
+            return this.volumeBox
+        } else {
+            this.volumeBox = document.createElement('div')
+            this.volumeBox.className = 'volume'
+            progressBar.appendChild(dot)
+            wrap.appendChild(progressBar)
+            this.volumeBox.appendChild(muteButton)
+            this.volumeBox.appendChild(wrap)
+            this.player.append(this.volumeBox)
+        }
+    }
+
     timer ({ mode }) {
         this.timerLoad = true
 
@@ -267,8 +336,8 @@ export default class player {
             this.timeline.dot = this.dot
             return this.timeline
         } else {
+            progressBar.appendChild(this.dot)
             this.timeline.appendChild(progressBar)
-            this.timeline.appendChild(this.dot)
             this.player.appendChild(this.timeline)
         }
     }
@@ -384,10 +453,6 @@ export default class player {
             progressDistance: this.progressDistance,
             progress: this.progress
         })
-    }
-    
-    volume () {
-        
     }
 }
 

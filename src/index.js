@@ -1,6 +1,6 @@
 require('@babel/polyfill')
 import './styles/style.less'
-import player from "./player.js"
+import podcastPlayer from "./player.js"
 
 let data = [
   {
@@ -30,30 +30,35 @@ let data = [
   }
 ]
 
-const audio = new player({
+const player = new podcastPlayer({
   id: 'myaudio',
   updateTimer: 10
 })
-audio.src = 'example.m4a'
-audio.data(data)
-audio.gallery({
+player.src = 'example.m4a'
+player.data(data)
+player.gallery({
   mode: 'render'
 })
-audio.tagLine({
+player.tagLine({
   mode: 'render'
 })
-audio.controllers({
+player.controllers({
   mode: 'render',
   playIcon: '<i class="fa fa-play" aria-hidden="true"></i>',
   pauseIcon: '<i class="fa fa-pause" aria-hidden="true"></i>',
   backward: true,
-  backwardIcon: '<i class="fa fa-backward" aria-hidden="true"></i>',
+  backwardIcon: '<i class="fa fa-undo" aria-hidden="true"></i>',
   forward: true,
-  forwardIcon: '<i class="fa fa-forward" aria-hidden="true"></i>'
+  forwardIcon: '<i class="fa fa-repeat" aria-hidden="true"></i>'
 })
-audio.timer({
+player.volumeController({
+  mode: 'render',
+  volumeIcon: '<i class="fa fa-volume-up" aria-hidden="true"></i>',
+  muteIcon: '<i class="fa fa-volume-off" aria-hidden="true"></i>'
+})
+player.timer({
   mode: 'render'
 })
-audio.timeline({
+player.timeline({
   mode: 'render'
 })

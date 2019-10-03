@@ -22,7 +22,7 @@ export const mouseMoveDot = (audio, dot, progressBar) => {
             }
 
             // update audio play time
-            audio.currentTime = Math.floor(per * audio.duration)
+            audio.currentTime = per * audio.duration
             audio.play()
         }
     })

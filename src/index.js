@@ -1,5 +1,6 @@
 require('@babel/polyfill')
-import './style.less'
+import './styles/style.less'
+import player from "./player.js"
 
 let data = [
   {
@@ -29,23 +30,20 @@ let data = [
   }
 ]
 
-import podcastPlayer from "./audioPlay.js"
-
-let audio = new podcastPlayer({
+const audio = new player({
   id: 'myaudio',
   updateTimer: 10
 })
 audio.src = 'example.m4a'
 audio.data(data)
 audio.gallery({
-  // itemClass: 'gallery-item',
-  // activeClass: 'active'
+  mode: 'render'
 })
 audio.tagLine({
-  // tagItemClass: ''
+  mode: 'render'
 })
 audio.controllers({
-  mode: 'html',
+  mode: 'render',
   playIcon: '<i class="fa fa-play" aria-hidden="true"></i>',
   pauseIcon: '<i class="fa fa-pause" aria-hidden="true"></i>',
   backward: true,
@@ -53,5 +51,9 @@ audio.controllers({
   forward: true,
   forwardIcon: '<i class="fa fa-forward" aria-hidden="true"></i>'
 })
-audio.timer()
-audio.timeline()
+audio.timer({
+  mode: 'render'
+})
+audio.timeline({
+  mode: 'render'
+})

@@ -20,48 +20,29 @@ html, body {
     background-color: #282326;
     #stage {
         display: flex;
-        flex: 1 0 300px;
+        flex: 1 0 auto;
         padding: 30px;
         .gallery-wrap {
+            display: flex;
+            align-items: center;
             position: relative;
             width: 100%;
-            height: 100%;
-            display: flex;
             .gallery-item {
                 display: none;
                 position: absolute;
                 left: 50%;
                 transform: translateX(-50%);
-                height: 100%;
                 overflow: hidden;
                 &.active {
                     display: block;
                 }
-                .img-wrap {
+                img {
                     float: left;
-                    max-width: 400px;
-                    height: 100%;
-                    padding-right: 30px;
-                    display: flex;
-                    align-items: center;
-                    .img {
-                        flex: 0 0 auto;
-                        max-width: 100%;
-                        img {
-                            max-width: 100%;
-                        }
-                    }
+                    width: 400px;
                 }
                 .context-wrap {
-                    height: 100%;
                     float: left;
                     color: #ffffff;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    .title, .context {
-                        flex: 0;
-                    }
                 }
             }
         }

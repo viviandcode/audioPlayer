@@ -10,7 +10,7 @@ export const mouseMoveDot = (audio, dot, progressBar) => {
     })
     document.addEventListener('mousemove', e => {
         if (mouseDownFlag) {
-            let currentX = e.clientX - progressBar.offsetLeft
+            let currentX = e.clientX - progressBar.getBoundingClientRect().left
             let per = currentX / progressBar.offsetWidth
 
             if (currentX < 0) {
@@ -31,8 +31,8 @@ export const mouseMoveDot = (audio, dot, progressBar) => {
 // mouse click progress bar
 export const mouseClickProgressBar = (audio, dot, progressBar) => {
     progressBar.addEventListener('click', e => {
-        dot.style.left = (e.clientX - progressBar.offsetLeft) / progressBar.offsetWidth * 100 + "%"
-        audio.currentTime = (e.clientX - progressBar.offsetLeft) / progressBar.offsetWidth * audio.duration
+        dot.style.left = (e.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth * 100 + "%"
+        audio.currentTime = (e.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth * audio.duration
         audio.play()
     })
 }

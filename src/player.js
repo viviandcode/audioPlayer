@@ -41,6 +41,16 @@ export default class podcastPlayer {
 
         this.player.appendChild(this.audio)
 
+        // div for gallery
+        this.stage = document.createElement('div')
+        this.stage.id = 'stage'
+        this.player.appendChild(this.stage)
+
+        // div for controllers
+        this.controllers = document.createElement('div')
+        this.controllers.id = 'controllers'
+        this.player.appendChild(this.controllers)
+
         this.watchPlay()
     }
 
@@ -132,8 +142,8 @@ export default class podcastPlayer {
         })
     }
 
-    // controller buttons
-    controllers ({ playIcon, pauseIcon, forwardStep, backward, backwardIcon, forward, forwardIcon, mode }) {
+    // buttons
+    buttons ({ mode, playIcon, pauseIcon, forwardStep, backward, backwardIcon, forward, forwardIcon, prev, prevIcon, prevFunc, next, nextIcon, nextFunc, customButtons }) {
         // play button, deafult
         this.playIcon = '&#9658'
         if (playIcon !== undefined && playIcon !== '') {
@@ -143,19 +153,6 @@ export default class podcastPlayer {
         if (pauseIcon !== undefined && pauseIcon !== '') {
             this.pauseIcon = pauseIcon
         }
-
-        // backward button
-        if (backward && backwardIcon === undefined || backwardIcon === '') {
-            backwardIcon = '&#8634'
-        }
-
-        // forward button
-        if (forward && forwardIcon === undefined || forwardIcon === '') {
-            forwardIcon = '&#8635'
-        }
-
-        let wrap = document.createElement('div')
-        wrap.className = 'controllers'
 
         // add to {this} for class to change
         this.playButton = document.createElement('div')
@@ -169,14 +166,17 @@ export default class podcastPlayer {
             }
         })
 
+        // backward / forward
+        let backwardButton, forwardButton
         if (forwardStep !== undefined && forwardStep !== 0) {
             this.forwardStep = forwardStep
         } else {
             this.forwardStep = 15
         }
-
-        let backwardButton, forwardButton
         if (backward) {
+            if (backwardIcon === undefined || backwardIcon === '') {
+                backwardIcon = '&#8634'
+            }
             backwardButton = document.createElement('div')
             backwardButton.className = 'backward'
             backwardButton.innerHTML = backwardIcon
@@ -185,8 +185,10 @@ export default class podcastPlayer {
                 this.audio.play()
             })
         }
-
         if (forward) {
+            if (forwardIcon === undefined || forwardIcon === '') {
+                forwardIcon = '&#8635'
+            }
             forwardButton = document.createElement('div')
             forwardButton.className = 'forward'
             forwardButton.innerHTML = forwardIcon
@@ -196,29 +198,91 @@ export default class podcastPlayer {
             })
         }
 
+        // prev button / next button
+        let prevButton, nextButton
+        if (prev) {
+            if (prevIcon === undefined || prevIcon === '') {
+                prevIcon = '&#8678'
+            }
+            prevButton = document.createElement('div')
+            prevButton.className = 'prev'
+            prevButton.innerHTML = prevIcon
+            prevButton.addEventListener('click', () => {
+                if (prevFunc !== undefined) {
+                    prevFunc()
+                }
+            })
+        }
+        if (next) {
+            if (nextIcon === undefined || nextIcon === '') {
+                nextIcon = '&#8680'
+            }
+            nextButton = document.createElement('div')
+            nextButton.className = 'next'
+            nextButton.innerHTML = nextIcon
+            nextButton.addEventListener('click', () => {
+                if (nextFunc !== undefined) {
+                    nextFunc()
+                }
+            })
+        }
+
         if (mode === undefined || mode !== 'render') {
             // return object
-            this.controllers = {}
-            this.controllers.playButton =  this.playButton
+            this.buttons = {}
+            this.buttons.playButton =  this.playButton
             if (backward) {
-                this.controllers.backwardButton = backwardButton
+                this.buttons.backwardButton = backwardButton
             }
             if (forward) {
-                this.controllers.forwardButton = forwardButton
+                this.buttons.forwardButton = forwardButton
             }
-            return this.controllers
+            if (prev) {
+                this.buttons.prevButton = prevButton
+            }
+            if (next) {
+                this.buttons.nextButton = nextButton
+            }
+            return this.buttons
         } else {
             // render html
+            this.buttons = document.createElement('div')
+            this.buttons.className = 'buttons'
+
+            let wrap = document.createElement('div')
+            wrap.className = 'play-buttons'
+
+            if (customButtons !== undefined) {
+                let _custom = this.customButtons({ customButtons: customButtons })
+                // this.buttons.appendChild()
+                this.buttons.appendChild(_custom)
+            }
+
             wrap.appendChild(this.playButton)
+            if (prev) {
+                wrap.insertBefore(prevButton, this.playButton)
+            }
             if (backward) {
                 wrap.insertBefore(backwardButton, this.playButton)
             }
-
             if (forward) {
                 wrap.appendChild(forwardButton)
             }
-            this.player.appendChild(wrap)
+            if (next) {
+                wrap.appendChild(nextButton)
+            }
+
+            this.buttons.appendChild(wrap)
+            this.controllers.appendChild(this.buttons)
         }
+    }
+
+    customButtons ({ customButtons }) {
+        let wrap = document.createElement('div')
+        wrap.className = 'custom-buttons'
+        wrap.appendChild(customButtons)
+
+        return wrap
     }
 
     volumeController ({ mode, volumeIcon, muteIcon }) {
@@ -231,8 +295,8 @@ export default class podcastPlayer {
             _muteIcon = muteIcon
         }
 
-        let wrap = document.createElement('div')
-        wrap.className = 'wrap'
+        let progress = document.createElement('div')
+        progress.className = 'progress-wrap'
 
         let progressBar = document.createElement('div')
         progressBar.className = 'progress-bar'
@@ -267,42 +331,48 @@ export default class podcastPlayer {
         } else {
             this.volumeBox = document.createElement('div')
             this.volumeBox.className = 'volume'
+
+            let wrap = document.createElement('div')
+            wrap.className = 'wrap'
+
             progressBar.appendChild(dot)
-            wrap.appendChild(progressBar)
-            this.volumeBox.appendChild(muteButton)
+            progress.appendChild(progressBar)
             this.volumeBox.appendChild(wrap)
-            this.player.append(this.volumeBox)
+            wrap.appendChild(muteButton)
+            wrap.appendChild(progress)
+
+            this.buttons.append(this.volumeBox)
         }
     }
 
     timer ({ mode }) {
         this.timerLoad = true
 
-        let timer = document.createElement('div')
-        timer.className = 'timer'
+        this.timer = document.createElement('div')
+        this.timer.className = 'timer'
 
         // add to {this} for class to change
         this.current = document.createElement('div')
         this.current.className = 'current'
 
-        let duration = document.createElement('div')
-        duration.className = 'duration'
+        this.duration = document.createElement('div')
+        this.duration.className = 'duration'
 
         this.audio.addEventListener('loadeddata', () => {
             this.current.innerText = '00:00:00'
-            duration.innerText = timeFormat(this.audio.duration)
+            this.duration.innerText = timeFormat(this.audio.duration)
         })
 
         if (mode === undefined || mode !== 'render') {
             this.timer = {}
             this.timer.current = this.current
-            this.timer.duration = duration
+            this.timer.duration = this.duration
 
             return this.timer
         } else {
-            timer.appendChild(this.current)
-            timer.appendChild(duration)
-            this.player.appendChild(timer)
+            this.timer.appendChild(this.current)
+            this.timer.appendChild(this.duration)
+            this.controllers.appendChild(this.timer)
         }
     }
 
@@ -338,7 +408,7 @@ export default class podcastPlayer {
         } else {
             progressBar.appendChild(this.dot)
             this.timeline.appendChild(progressBar)
-            this.player.appendChild(this.timeline)
+            this.timer.insertBefore(this.timeline, this.duration)
         }
     }
 
@@ -364,10 +434,34 @@ export default class podcastPlayer {
             galleryItem.className = this.galleryItemClass
             galleryItem.setAttribute('time-point', this.data[index].timePoint)
 
+            let imgWrap = document.createElement('div')
+            imgWrap.className = 'img-wrap'
+
+            let img = document.createElement('div')
+            img.className = 'img'
+
             let galleryImg = new Image()
             galleryImg.setAttribute('src', this.data[index].imgUrl)
 
-            galleryItem.appendChild(galleryImg)
+            img.appendChild(galleryImg)
+            imgWrap.appendChild(img)
+
+            let contextWrap = document.createElement('div')
+            contextWrap.className = 'context-wrap'
+
+            let title = document.createElement('h3')
+            title.className = 'title'
+            title.innerText = this.data[index].title
+
+            let context = document.createElement('div')
+            context.className = 'context'
+            context.innerText = this.data[index].context
+
+            contextWrap.appendChild(title)
+            contextWrap.appendChild(context)
+
+            galleryItem.appendChild(imgWrap)
+            galleryItem.appendChild(contextWrap)
             this.gallery.appendChild(galleryItem)
         }
 
@@ -380,7 +474,7 @@ export default class podcastPlayer {
         if (mode === undefined || mode !== 'render') {
             return this.gallery
         } else {
-            this.player.appendChild(this.gallery)
+            this.stage.appendChild(this.gallery)
         }
     }
 
@@ -420,10 +514,20 @@ export default class podcastPlayer {
             item.setAttribute('time-point', this.data[index].timePoint)
             item.setAttribute('style', 'left:' + this.data[index].timePoint * this.progressDistance + 'px')
 
+            let line = document.createElement('div')
+            line.className = 'line'
+
             let title = document.createElement('div')
             title.innerText = this.data[index].title
 
+            // time mark
+            let timeMark = document.createElement('div')
+            timeMark.className = 'time-mark'
+            timeMark.innerText = timeFormat(this.data[index].timePoint)
+
+            item.appendChild(line)
             item.appendChild(title)
+            item.appendChild(timeMark)
 
             item.addEventListener('click', () => {
                 this.audio.currentTime = this.data[index].timePoint
@@ -444,7 +548,7 @@ export default class podcastPlayer {
             this.tagLine.appendChild(midLine)
             this.tagLine.appendChild(wrap)
     
-            this.player.appendChild(this.tagLine)
+            this.controllers.appendChild(this.tagLine)
         }
 
         tagLineDrag({

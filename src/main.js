@@ -1,18 +1,17 @@
-import podcastPlayer from "./main.js"
+import { timeFormat } from './utils.js'
+import { mouseMoveDot, mouseClickProgressBar } from './timeline.js'
+import { galleryActive } from './gallery.js'
+import { tagLineProgress, tagLineDrag } from './tagLine.js'
+import { mouseMoveVolumeDot, mouseClickVolumeProgressBar } from './volume.js'
 
 export default class podcastPlayer {
-    constructor({ id, src, updateTimer, loop }) {
+    constructor({ src, updateTime }) {
         // load flag
         this.timerLoad = false
         this.timelineLoad = false
         this.galleryLoad = false
         this.tagLineLoad = false
 
-        if (id === undefined || id === '') {
-            console.error('Need id!')
-            return false
-        }
-        this.player = document.getElementById(id)
 
         // audio element
         this.audio = document.createElement('audio')
@@ -22,30 +21,12 @@ export default class podcastPlayer {
             this.audio.src = src
         }
 
-        // updateTimer default 20 millisecond
-        if (updateTimer !== undefined && updateTimer !== 0) {
-            this.updateStep = updateTimer
+        // updateTime default 20 millisecond
+        if (updateTime !== undefined && updateTime !== 0) {
+            this.updateTime = updateTime
         } else {
-            this.updateStep = 20
+            this.updateTime = 20
         }
-
-        if (loop !== undefined && loop === true) {
-            this.audio.loop = true
-        } else {
-            this.audio.loop = false
-        }
-
-        this.player.appendChild(this.audio)
-
-        // div for gallery
-        this.stage = document.createElement('div')
-        this.stage.id = 'stage'
-        this.player.appendChild(this.stage)
-
-        // div for controllers
-        this.controllers = document.createElement('div')
-        this.controllers.id = 'controllers'
-        this.player.appendChild(this.controllers)
 
         this.watchPlay()
     }
@@ -129,7 +110,7 @@ export default class podcastPlayer {
                         progress: this.progress
                     })
                 }
-            }, this.updateStep)
+            }, this.updateTime)
         })
 
         this.audio.addEventListener('pause', () => {
@@ -138,21 +119,12 @@ export default class podcastPlayer {
         })
     }
 
-    // buttons
-    buttons ({ mode, playIcon, pauseIcon, forwardStep, backward, backwardIcon, forward, forwardIcon, prev, prevIcon, prevFunc, next, nextIcon, nextFunc, customButtons }) {
-        // play button, deafult
+    buttons ({ step, backward, forward, prev, prevFunc, next, nextFunc }) {
         this.playIcon = '&#9658'
-        if (playIcon !== undefined && playIcon !== '') {
-            this.playIcon = playIcon
-        }
         this.pauseIcon = '&Iota;&Iota;'
-        if (pauseIcon !== undefined && pauseIcon !== '') {
-            this.pauseIcon = pauseIcon
-        }
 
-        // add to {this} for class to change
-        this.playButton = document.createElement('div')
-        this.playButton.className = 'play'
+        this.playButton = document.createElement('button')
+        this.playButton.className = 'play-button'
         this.playButton.innerHTML = this.playIcon
         this.playButton.addEventListener('click', () => {
             if (this.audio.paused) {
@@ -164,32 +136,26 @@ export default class podcastPlayer {
 
         // backward / forward
         let backwardButton, forwardButton
-        if (forwardStep !== undefined && forwardStep !== 0) {
-            this.forwardStep = forwardStep
+        if (step !== undefined && step !== 0) {
+            this.step = step
         } else {
-            this.forwardStep = 15
+            this.step = 15
         }
         if (backward) {
-            if (backwardIcon === undefined || backwardIcon === '') {
-                backwardIcon = '&#8634'
-            }
-            backwardButton = document.createElement('div')
-            backwardButton.className = 'backward'
-            backwardButton.innerHTML = backwardIcon
+            backwardButton = document.createElement('button')
+            backwardButton.className = 'backward-button'
+            backwardButton.innerHTML = '&#8634'
             backwardButton.addEventListener('click', () => {
-                this.audio.currentTime -= this.forwardStep
+                this.audio.currentTime -= this.step
                 this.audio.play()
             })
         }
         if (forward) {
-            if (forwardIcon === undefined || forwardIcon === '') {
-                forwardIcon = '&#8635'
-            }
-            forwardButton = document.createElement('div')
-            forwardButton.className = 'forward'
-            forwardButton.innerHTML = forwardIcon
+            forwardButton = document.createElement('button')
+            forwardButton.className = 'forward-button'
+            forwardButton.innerHTML = '&#8635'
             forwardButton.addEventListener('click', () => {
-                this.audio.currentTime += this.forwardStep
+                this.audio.currentTime += this.step
                 this.audio.play()
             })
         }
@@ -197,12 +163,9 @@ export default class podcastPlayer {
         // prev button / next button
         let prevButton, nextButton
         if (prev) {
-            if (prevIcon === undefined || prevIcon === '') {
-                prevIcon = '&#8678'
-            }
-            prevButton = document.createElement('div')
-            prevButton.className = 'prev'
-            prevButton.innerHTML = prevIcon
+            prevButton = document.createElement('button')
+            prevButton.className = 'prev-button'
+            prevButton.innerHTML = '&#8678'
             prevButton.addEventListener('click', () => {
                 if (prevFunc !== undefined) {
                     prevFunc()
@@ -210,12 +173,9 @@ export default class podcastPlayer {
             })
         }
         if (next) {
-            if (nextIcon === undefined || nextIcon === '') {
-                nextIcon = '&#8680'
-            }
-            nextButton = document.createElement('div')
-            nextButton.className = 'next'
-            nextButton.innerHTML = nextIcon
+            nextButton = document.createElement('button')
+            nextButton.className = 'next-button'
+            nextButton.innerHTML = '&#8680'
             nextButton.addEventListener('click', () => {
                 if (nextFunc !== undefined) {
                     nextFunc()
@@ -223,65 +183,24 @@ export default class podcastPlayer {
             })
         }
 
-        if (mode === undefined || mode !== 'render') {
-            // return object
-            this.buttons = {}
-            this.buttons.playButton =  this.playButton
-            if (backward) {
-                this.buttons.backwardButton = backwardButton
-            }
-            if (forward) {
-                this.buttons.forwardButton = forwardButton
-            }
-            if (prev) {
-                this.buttons.prevButton = prevButton
-            }
-            if (next) {
-                this.buttons.nextButton = nextButton
-            }
-            return this.buttons
-        } else {
-            // render html
-            this.buttons = document.createElement('div')
-            this.buttons.className = 'buttons'
-
-            let wrap = document.createElement('div')
-            wrap.className = 'play-buttons'
-
-            if (customButtons !== undefined) {
-                let _custom = this.customButtons({ customButtons: customButtons })
-                // this.buttons.appendChild()
-                this.buttons.appendChild(_custom)
-            }
-
-            wrap.appendChild(this.playButton)
-            if (prev) {
-                wrap.insertBefore(prevButton, this.playButton)
-            }
-            if (backward) {
-                wrap.insertBefore(backwardButton, this.playButton)
-            }
-            if (forward) {
-                wrap.appendChild(forwardButton)
-            }
-            if (next) {
-                wrap.appendChild(nextButton)
-            }
-
-            this.buttons.appendChild(wrap)
-            this.controllers.appendChild(this.buttons)
+        this.buttons = {}
+        this.buttons.playButton =  this.playButton
+        if (backward) {
+            this.buttons.backwardButton = backwardButton
         }
+        if (forward) {
+            this.buttons.forwardButton = forwardButton
+        }
+        if (prev) {
+            this.buttons.prevButton = prevButton
+        }
+        if (next) {
+            this.buttons.nextButton = nextButton
+        }
+        return this.buttons
     }
 
-    customButtons ({ customButtons }) {
-        let wrap = document.createElement('div')
-        wrap.className = 'custom-buttons'
-        wrap.appendChild(customButtons)
-
-        return wrap
-    }
-
-    volumeController ({ mode, volumeIcon, muteIcon }) {
+    volumeController ({ volumeIcon, muteIcon }) {
         let _volumeIcon = '&#9836'
         if (volumeIcon !== undefined && volumeIcon !== '') {
             _volumeIcon = volumeIcon
@@ -291,8 +210,8 @@ export default class podcastPlayer {
             _muteIcon = muteIcon
         }
 
-        let progress = document.createElement('div')
-        progress.className = 'progress-wrap'
+        // let progressWrap = document.createElement('div')
+        // progressWrap.className = 'progress-wrap'
 
         let progressBar = document.createElement('div')
         progressBar.className = 'progress-bar'
@@ -301,11 +220,13 @@ export default class podcastPlayer {
         dot.className = 'dot'
         dot.style.left = this.audio.volume * 100 + '%'
 
-        let muteButton = document.createElement('div')
-        muteButton.className = 'mute'
-        muteButton.innerHTML = _volumeIcon
+        progressBar.appendChild(dot)
 
-        muteButton.addEventListener('click', () => {
+        let audioButton = document.createElement('div')
+        audioButton.className = 'audio-button'
+        audioButton.innerHTML = _volumeIcon
+
+        audioButton.addEventListener('click', () => {
             if (this.audio.muted) {
                 this.audio.muted = false
                 muteButton.innerHTML = _volumeIcon
@@ -318,36 +239,16 @@ export default class podcastPlayer {
         mouseMoveVolumeDot(this.audio, dot, progressBar)
         mouseClickVolumeProgressBar(this.audio, dot, progressBar)
 
-        if (mode === undefined || mode !== 'render') {
-            this.volumeBox = {}
-            this.volumeBox.progressBar = progressBar
-            this.volumeBox.dot = dot
-            this.volumeBox.muteButton = muteButton
-            return this.volumeBox
-        } else {
-            this.volumeBox = document.createElement('div')
-            this.volumeBox.className = 'volume'
-
-            let wrap = document.createElement('div')
-            wrap.className = 'wrap'
-
-            progressBar.appendChild(dot)
-            progress.appendChild(progressBar)
-            this.volumeBox.appendChild(wrap)
-            wrap.appendChild(muteButton)
-            wrap.appendChild(progress)
-
-            this.buttons.append(this.volumeBox)
-        }
+        this.volumeBox = {}
+        this.volumeBox.progressBar = progressBar
+        this.volumeBox.dot = dot
+        this.volumeBox.muteButton = muteButton
+        return this.volumeBox
     }
 
-    timer ({ mode }) {
+    timer () {
         this.timerLoad = true
 
-        this.timer = document.createElement('div')
-        this.timer.className = 'timer'
-
-        // add to {this} for class to change
         this.current = document.createElement('div')
         this.current.className = 'current'
 
@@ -359,17 +260,10 @@ export default class podcastPlayer {
             this.duration.innerText = timeFormat(this.audio.duration)
         })
 
-        if (mode === undefined || mode !== 'render') {
-            this.timer = {}
-            this.timer.current = this.current
-            this.timer.duration = this.duration
-
-            return this.timer
-        } else {
-            this.timer.appendChild(this.current)
-            this.timer.appendChild(this.duration)
-            this.controllers.appendChild(this.timer)
-        }
+        this.timer = {}
+        this.timer.current = this.current
+        this.timer.duration = this.duration
+        return this.timer
     }
 
     timeline ({ mode, dotFunction, progressFunction }) {

@@ -7,6 +7,7 @@ export const mouseMoveDot = (audio, dot, progressBar) => {
     })
     document.addEventListener('mouseup', () => {
         mouseDownFlag = false
+        audio.play()
     })
     document.addEventListener('mousemove', e => {
         if (mouseDownFlag) {
@@ -23,7 +24,7 @@ export const mouseMoveDot = (audio, dot, progressBar) => {
 
             // update audio play time
             audio.currentTime = per * audio.duration
-            audio.play()
+            // audio.play()
         }
     })
 }

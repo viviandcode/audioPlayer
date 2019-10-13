@@ -266,7 +266,7 @@ export default class podcastPlayer {
         return this.timer
     }
 
-    timeline ({ mode, dotFunction, progressFunction }) {
+    timeline ({ dotFunction, progressFunction }) {
         this.timelineLoad = true
 
         this.timeline = document.createElement('div')
@@ -290,19 +290,13 @@ export default class podcastPlayer {
             progressFunction(this.audio, this.dot, progressBar)
         }
 
-        if (mode === undefined || mode !== 'render') {
-            this.timeline = {}
-            this.timeline.progressBar = progressBar
-            this.timeline.dot = this.dot
-            return this.timeline
-        } else {
-            progressBar.appendChild(this.dot)
-            this.timeline.appendChild(progressBar)
-            this.timer.insertBefore(this.timeline, this.duration)
-        }
+        this.timeline = {}
+        this.timeline.progressBar = progressBar
+        this.timeline.dot = this.dot
+        return this.timeline
     }
 
-    gallery ({ mode, itemClass, activeClass }) {
+    gallery ({ itemClass, activeClass }) {
         this.galleryLoad = true
 
         if (itemClass === undefined || itemClass === '') {
@@ -361,11 +355,7 @@ export default class podcastPlayer {
         this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('time-point')
         galleryItems[this.gallerySelectIndex].classList.add(this.galleryActiveClass)
 
-        if (mode === undefined || mode !== 'render') {
-            return this.gallery
-        } else {
-            this.stage.appendChild(this.gallery)
-        }
+        return this.gallery
     }
 
     // html structure:
@@ -373,7 +363,7 @@ export default class podcastPlayer {
     //   div.short-cuts-wrap
     //     div.short-cuts-progress
     //       div.short-cut-item ...
-    tagLine ({ mode, tagItemClass, progressDistance }) {
+    tagLine ({ tagItemClass, progressDistance }) {
         this.tagLineLoad = true
 
         if (tagItemClass === undefined || tagItemClass === '') {
@@ -427,26 +417,14 @@ export default class podcastPlayer {
             this.progress.appendChild(item)
         }
 
-        if (mode === undefined || mode !== 'render') {
-            return this.progress
-        } else {
-            wrap.appendChild(this.progress)
-
-            let midLine = document.createElement('div')
-            midLine.className = 'mid-line'
-    
-            this.tagLine.appendChild(midLine)
-            this.tagLine.appendChild(wrap)
-    
-            this.controllers.appendChild(this.tagLine)
-        }
-
         tagLineDrag({
             tagLine: this.tagLine,
             audio: this.audio,
             progressDistance: this.progressDistance,
             progress: this.progress
         })
+
+        return this.progress
     }
 }
 

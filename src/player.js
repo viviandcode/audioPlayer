@@ -1,4 +1,4 @@
-import podcastPlayer from "./main.js"
+import podcastPlayer from "./core.js"
 
 export default class podcastPlayer {
     constructor({ id, src, updateTimer, loop }) {

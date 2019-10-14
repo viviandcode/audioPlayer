@@ -1,39 +1,54 @@
-import core from "./main.js"
+import core from "./core.js"
 import data from "./data.js"
 import './styles/style.less'
 
-const playerCore = new core({
-    updateTimer: 10
-  })
+export default class player {
+    constructor({ id, updateTimer }) {
+        if (id === undefined || id === '') {
+            console.error('id id required!')
+            return false
+        }
+        this.player = document.getElementById(id)
 
-playerCore.src = 'example.m4a'
-playerCore.data(data)
+        // this.core = {}
+        if (updateTimer === undefined || updateTimer === 0) {
+            console.error('updateTimer is required!')
+            return false
+        } else {
+            this.core = new core({
+                updateTimer: updateTimer
+            })
+        }
+    }
 
-const buttons = playerCore.buttons({
-    playIcon: '<i class="fa fa-play" aria-hidden="true"></i>',
-    pauseIcon: '<i class="fa fa-pause" aria-hidden="true"></i>',
-    backward: true,
-    backwardIcon: '<i class="fa fa-undo" aria-hidden="true"></i>',
-    forward: true,
-    forwardIcon: '<i class="fa fa-repeat" aria-hidden="true"></i>',
-    prev: true,
-    prevIcon: '<i class="fa fa-backward" aria-hidden="true"></i>',
-    prevFunc: () => { alert('prev login!') },
-    next: true,
-    nextIcon: '<i class="fa fa-forward" aria-hidden="true"></i>',
-    nextFunc: () => { alert('next login!') },
-    customButtons: custom
-})
+    set src (src) {
+        this.core.src = src
+    }
+    get src () {
+        return this.core.src
+    }
 
-const volume = playerCore.volumeController({
-    volumeIcon: '<i class="fa fa-volume-up" aria-hidden="true"></i>',
-    muteIcon: '<i class="fa fa-volume-off" aria-hidden="true"></i>'
-})
+    playButton () {
+        this.playButton = this.core.playButton()
+    }
 
-const timer = playerCore.timer()
+    jumpButton () {
+        this.jumpButton = this.core.jumpButton()
+    }
 
-const timeline = playerCore.timeline()
+    changeButton () {
+        this.changeButton = this.core.changeButton()
+    }
 
-const gallery = playerCore.gallery()
+    volumeController () {
+        this.volumeController = this.core.volumeController()
+    }
 
-const tagLine = playerCore.tagLine()
+    timer () {
+        this.timer = this.core.timer()
+    }
+
+    timeline () {
+        this.timeline = this.core.timeline()
+    }
+}

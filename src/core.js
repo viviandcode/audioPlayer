@@ -1,4 +1,4 @@
-import { timeFormat } from './utils.js'
+import { timeFormat } from './utils/timeFormat.js'
 import { mouseMoveDot, mouseClickProgressBar } from './timeline.js'
 import { galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'
@@ -96,7 +96,8 @@ export default class core {
                         audio: this.audio,
                         gallerySelectIndex: this.gallerySelectIndex,
                         gallerySelectTimePoint: this.gallerySelectTimePoint,
-                        galleryItems: this.gallery.children,
+                        // galleryItems: this.gallery.children,
+                        galleryItems: this.galleryItems,
                         itemClass: this.galleryItemClass,
                         activeClass: this.galleryActiveClass
                     })
@@ -330,6 +331,11 @@ export default class core {
     }
 
     gallery ({ itemClass, activeClass }) {
+        if (this.data === undefined || this.data === '') {
+            console.error('no data!')
+            return false
+        }
+
         this.galleryLoad = true
 
         if (itemClass === undefined || itemClass === '') {
@@ -343,8 +349,11 @@ export default class core {
             this.galleryActiveClass = activeClass
         }
         
-        this.gallery = document.createElement('div')
-        this.gallery.className = 'gallery-wrap'
+        // let gallery = document.createElement('div')
+        // gallery.className = 'gallery-wrap'
+
+        let gallery = {}
+        gallery.items = []
 
         for (let index = 0; index < this.data.length; index++) {
             let galleryItem = document.createElement('figure')
@@ -363,40 +372,43 @@ export default class core {
             img.appendChild(galleryImg)
             imgWrap.appendChild(img)
 
-            let contextWrap = document.createElement('div')
-            contextWrap.className = 'context-wrap'
+            let contentWrap = document.createElement('div')
+            contentWrap.className = 'content-wrap'
 
             let title = document.createElement('h3')
             title.className = 'title'
             title.innerText = this.data[index].title
 
-            let context = document.createElement('div')
-            context.className = 'context'
-            context.innerText = this.data[index].context
+            let content = document.createElement('div')
+            content.className = 'content'
+            content.innerText = this.data[index].context
 
-            contextWrap.appendChild(title)
-            contextWrap.appendChild(context)
+            contentWrap.appendChild(title)
+            contentWrap.appendChild(content)
 
             galleryItem.appendChild(imgWrap)
             galleryItem.appendChild(contextWrap)
-            this.gallery.appendChild(galleryItem)
+
+            // gallery.appendChild(galleryItem)
+            gallery.items.push(galleryItem)
         }
 
         // init gallery, default select first timepoint
-        let galleryItems = this.gallery.children
+        // let galleryItems = this.gallery.children
+        this.galleryItems = gallery.items
         this.gallerySelectIndex = 0
         this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('time-point')
-        galleryItems[this.gallerySelectIndex].classList.add(this.galleryActiveClass)
+        this.galleryItems[this.gallerySelectIndex].classList.add(this.galleryActiveClass)
 
-        return this.gallery
+        return gallery  
     }
 
-    // html structure:
-    // div.short-cuts
-    //   div.short-cuts-wrap
-    //     div.short-cuts-progress
-    //       div.short-cut-item ...
     tagLine ({ tagItemClass, progressDistance }) {
+        if (this.data === undefined || this.data === '') {
+            console.error('no data!')
+            return false
+        }
+
         this.tagLineLoad = true
 
         if (tagItemClass === undefined || tagItemClass === '') {
@@ -412,8 +424,8 @@ export default class core {
             this.progressDistance = progressDistance
         }
 
-        this.tagLine = document.createElement('div')
-        this.tagLine.className = 'tag-line'
+        // let tagLine = document.createElement('div')
+        // tagLine.className = 'tag-line'
 
         let wrap = document.createElement('div')
         wrap.className = 'tag-line-wrap'
@@ -427,13 +439,12 @@ export default class core {
             item.setAttribute('time-point', this.data[index].timePoint)
             item.setAttribute('style', 'left:' + this.data[index].timePoint * this.progressDistance + 'px')
 
-            let line = document.createElement('div')
-            line.className = 'line'
+            let timeLine = document.createElement('div')
+            timeLine.className = 'time-line'
 
             let title = document.createElement('div')
             title.innerText = this.data[index].title
 
-            // time mark
             let timeMark = document.createElement('div')
             timeMark.className = 'time-mark'
             timeMark.innerText = timeFormat(this.data[index].timePoint)
@@ -450,6 +461,11 @@ export default class core {
             this.progress.appendChild(item)
         }
 
+        wrap.appendChild(this.progress)
+
+        let timePointLine = document.createElement('div')
+        timePointLine.className = 'time-point-line'
+
         tagLineDrag({
             tagLine: this.tagLine,
             audio: this.audio,
@@ -457,7 +473,7 @@ export default class core {
             progress: this.progress
         })
 
-        return this.progress
+        // return this.progress
     }
 }
 

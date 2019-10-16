@@ -1,6 +1,4 @@
 import core from "./core.js"
-import data from "./data.js"
-import './styles/style.less'
 
 export default class player {
     constructor({ id, updateTimer }) {
@@ -28,6 +26,10 @@ export default class player {
         return this.core.src
     }
 
+    data (data) {
+        this.core.data(data)
+    }
+
     playButton () {
         this.playButton = this.core.playButton()
     }
@@ -50,5 +52,9 @@ export default class player {
 
     timeline () {
         this.timeline = this.core.timeline()
+    }
+
+    gallery () {
+        this.gallery = this.core.gallery()
     }
 }

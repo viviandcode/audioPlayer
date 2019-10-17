@@ -424,8 +424,8 @@ export default class core {
             this.progressDistance = progressDistance
         }
 
-        // let tagLine = document.createElement('div')
-        // tagLine.className = 'tag-line'
+        let wrapWrap = document.createElement('div')
+        wrapWrap.className = 'tag-line'
 
         let wrap = document.createElement('div')
         wrap.className = 'tag-line-wrap'
@@ -466,14 +466,22 @@ export default class core {
         let timePointLine = document.createElement('div')
         timePointLine.className = 'time-point-line'
 
+        wrapWrap.appendChild(midLine)
+        wrapWrap.appendChild(wrap)
+
         tagLineDrag({
-            tagLine: this.tagLine,
+            tagLine: wrapWrap,
             audio: this.audio,
             progressDistance: this.progressDistance,
             progress: this.progress
         })
 
-        // return this.progress
+        let tagLine = {}
+        tagLine.timePointLine = timePointLine
+        tagLine.progress = this.progress
+        tagLine.wrapWrap = wrapWrap
+
+        return tagLine
     }
 }
 

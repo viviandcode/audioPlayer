@@ -8,7 +8,11 @@ export default class player {
         }
         this.player = document.getElementById(id)
 
-        // this.core = {}
+        this.controller = document.createElement('div')
+        this.controller.className = 'controller'
+
+        this.player.appendChild(this.controller)
+
         if (updateTimer === undefined || updateTimer === 0) {
             console.error('updateTimer is required!')
             return false
@@ -30,12 +34,15 @@ export default class player {
         this.core.data(data)
     }
 
-    playButton () {
-        this.playButton = this.core.playButton()
+    playButton ({ playIcon, pauseIcon, className }) {
+        this.playButton = this.core.playButton({ playIcon, pauseIcon, className })
+        this.controller.appendChild(this.playButton)
     }
 
-    jumpButton () {
-        this.jumpButton = this.core.jumpButton()
+    jumpButton ({ jumpTime, backward, backwardClass, forward, forwardClass }) {
+        this.jumpButton = this.core.jumpButton({ jumpTime, backward, backwardClass, forward, forwardClass })
+        this.controller.insertBefore(this.jumpButton.backwardButton, this.playButton)
+        this.controller.appendChild(this.jumpButton.forwardButton)
     }
 
     changeButton () {
@@ -56,5 +63,9 @@ export default class player {
 
     gallery () {
         this.gallery = this.core.gallery()
+    }
+
+    tagLine () {
+        this.tagLine = this.core.tagLine()
     }
 }

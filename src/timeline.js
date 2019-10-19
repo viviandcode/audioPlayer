@@ -4,10 +4,13 @@ export const mouseMoveDot = (audio, dot, progressBar) => {
 
     dot.addEventListener('mousedown', () => {
         mouseDownFlag = true
+        audio.pause()
     })
     document.addEventListener('mouseup', () => {
-        mouseDownFlag = false
-        audio.play()
+        if (mouseDownFlag) {
+            audio.play()
+            mouseDownFlag = false
+        }
     })
     document.addEventListener('mousemove', e => {
         if (mouseDownFlag) {

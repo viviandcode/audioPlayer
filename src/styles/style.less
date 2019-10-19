@@ -18,184 +18,146 @@ html, body {
     display: flex;
     flex-direction: column;
     background-color: #282326;
-    #stage {
-        display: flex;
+    .gallery-wrap {
         flex: 1 0 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         padding: 30px;
-        .gallery-wrap {
-            position: relative;
-            width: 100%;
+        .gallery-item {
+            display: none;
+            &.active {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+            .img-wrap {
+                max-width: 400px;
+                img {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    .tag-line {
+        flex: 0 0 auto;
+        position: relative;
+        width: 100%;
+        max-height: 90px;
+        background-color: rgba(255, 255, 255, 0.2);
+        cursor: col-resize;
+        .time-point-line {
+            position: absolute;
+            left: 50%;
+            width: 2px;
             height: 100%;
-            display: flex;
-            .gallery-item {
-                display: none;
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                height: 100%;
-                overflow: hidden;
-                &.active {
-                    display: block;
-                }
-                .img-wrap {
-                    float: left;
-                    max-width: 400px;
-                    height: 100%;
-                    padding-right: 30px;
-                    display: flex;
-                    align-items: center;
-                    .img {
-                        flex: 0 0 auto;
-                        max-width: 100%;
-                        img {
-                            max-width: 100%;
-                        }
-                    }
-                }
-                .context-wrap {
-                    height: 100%;
-                    float: left;
-                    color: #ffffff;
+            background-color: #ffffff;
+            z-index: 9999999;
+        }
+        .progress-wrap {
+            margin-left: 50%;
+            .progress {
+                position: relative;
+                height: 90px;
+                .item {
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
-                    .title, .context {
-                        flex: 0;
+                    position: absolute;
+                    height: 100%;
+                    color: #ffffff;
+                    &:hover {
+                        // background-color: rgba(255, 255, 255, 0.5);
+                        .time-line {
+                            background-color: #ffffff;
+                        }
+                        .title {
+                            background-color: rgba(255, 255, 255, 0.5);
+                            cursor: pointer;
+                        }
+                        .time-mark {
+                            visibility: visible;
+                        }
                     }
-                }
-            }
-        }
-    }
-    #controllers {
-        display: flex;
-        flex: 0 0 auto;
-        flex-direction: column;
-    }
-}
-
-.tag-line {
-    position: relative;
-    width: 100%;
-    height: 90px;
-    background-color: rgba(255, 255, 255, 0.2);
-    cursor: col-resize;
-    .mid-line {
-        position: absolute;
-        left: 50%;
-        width: 2px;
-        height: 100%;
-        background-color: #ffffff;
-        z-index: 9999999;
-    }
-    .tag-line-wrap {
-        margin-left: 50%;
-        .tag-line-progress{
-            position: relative;
-            height: 90px;
-            .tag-line-item {
-                display: inline-block;
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                padding: 5px 10px;
-                background-color: rgba(255, 255, 255, 0.2);
-                color: #ffffff;
-                cursor: pointer;
-                .line {
-                    position: absolute;
-                    top: -90%;
-                    left: 0;
-                    width: 1px;
-                    height: 90px;
-                    background: hsla(0,0%,100%,.2);
-                }
-                .time-mark {
-                    position: absolute;
-                    bottom: -50px;
-                    left: -20px;
-                    font-size: 12px;
-                    visibility: hidden;
-                }
-                &:hover {
-                    background-color: rgba(255, 255, 255, 0.5);
-                    .line {
-                        background-color: #ffffff;
+                    .time-line {
+                        position: absolute;
+                        left: 0;
+                        width: 1px;
+                        height: 90px;
+                        background: hsla(0, 0%, 100%, 0.2);
+                    }
+                    .title {
+                        padding: 3px 5px;
+                        background-color: rgba(255, 255, 255, 0.2);
                     }
                     .time-mark {
-                        visibility: visible;
+                        position: absolute;
+                        bottom: -20px;
+                        left: -20px;
+                        font-size: 12px;
+                        visibility: hidden;
                     }
                 }
             }
         }
     }
-}
-
-.buttons {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 10px 30px;
-    .custom-buttons {
+    .controller {
+        flex: 0 0 auto;
         display: flex;
-        flex: 1 1 30%;
-        .wrap {
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 30px;
+        .custom {
             display: flex;
-            align-items: center;
-            flex-direction: row;
+            flex: 1 1 30%;
             a {
                 margin: 0 10px;
                 color: #ffffff;
                 font-size: 13px;
                 cursor: pointer;
                 i {
-                    color: hsla(0,0%,100%,.3);
+                    color: hsla(0, 0%, 100%, 0.3);
                 }
                 span {
                     margin-left: 9px;
                 }
             }
         }
-    }
-    .play-buttons {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex: 0 1 auto;
-        .prev, .backward, .play, .forward, .next {
-            margin: 10px 20px;
-            color: #ffffff;
-            cursor: pointer;
+        .play-controller {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 1 auto;
+            button {
+                margin: 10px 20px;
+                color: #ffffff;
+                cursor: pointer;
+                background: none;
+                border: 0;
+                font-size: 16px;
+            }
+            .prev-button, .next-button {
+                margin: 10px 30px;
+            }
         }
-        .prev, .next {
-            margin: 10px 30px;
-        }
-    }
-    .volume {
-        flex: 1 1 30%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        .wrap {
-            position: relative;
-            .mute {
-                display: inline-block;
-                position: relative;
-                top: 2px;
+        .volume {
+            flex: 1 1 30%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            .audio-button {
                 width: 20px;
                 color: #ffffff;
                 cursor: pointer;
             }
-            .progress-wrap {
-                display: inline-block;
+            .progress-bar {
+                position: relative;
                 width: 80px;
-                .progress-bar {
-                    position: relative;
-                    height: 5px;
-                    background-color: hsla(0,0%,100%,.1);
-                    cursor: pointer;
-                    &:hover {
-                        background-color: hsla(0,0%,100%,.2);
-                    }
+                height: 5px;
+                background-color: hsla(0,0%,100%,.1);
+                cursor: pointer;
+                &:hover {
+                    background-color: hsla(0,0%,100%,.2);
                 }
                 .dot {
                     position: absolute;
@@ -210,37 +172,37 @@ html, body {
             }
         }
     }
-}
-
-.timer {
-    display: flex;
-    flex-direction: row;
-    margin: 10px 30px;
-    color: #fff;
-    font-size: 12px;
-    .timeline {
-        flex: 1 1 auto;
+    .timeline-wrap {
+        flex: 0 0 auto;
         display: flex;
-        padding: 10px 20px 30px;
-        .progress-bar {
-            position: relative;
-            width: 100%;
-            height: 5px;
-            background-color: hsla(0,0%,100%,.1);
-            cursor: pointer;
-            &:hover {
-                background-color: hsla(0,0%,100%,.2);
+        flex-direction: row;
+        margin: 10px 30px;
+        color: #fff;
+        font-size: 12px;
+        .timeline {
+            flex: 1 1 auto;
+            display: flex;
+            padding: 10px 20px 30px;
+            .progress-bar {
+                position: relative;
+                width: 100%;
+                height: 5px;
+                background-color: hsla(0,0%,100%,.1);
+                cursor: pointer;
+                &:hover {
+                    background-color: hsla(0,0%,100%,.2);
+                }
+                .dot {
+                    position: absolute;
+                    top: -2px;
+                    border-radius: 50%;
+                    width: 10px;
+                    height: 10px;
+                    background-color: #ffffff;
+                    cursor: col-resize;
+                    transform: translateX(-50%)
+                }
             }
-        }
-        .dot {
-            position: absolute;
-            top: -2px;
-            border-radius: 50%;
-            width: 10px;
-            height: 10px;
-            background-color: #ffffff;
-            cursor: col-resize;
-            transform: translateX(-50%)
         }
     }
 }

@@ -151,10 +151,10 @@ export default class core {
         return this.playButton
     }
 
-    jumpButton ({ jumpTime, backward, backwardClass, forward, forwardClass }) {
+    jumpButton ({ jumpTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
         let backwardButton, forwardButton
 
-        if (jumpTime === undefined && jumpTime === 0) {
+        if (jumpTime === undefined || jumpTime === 0) {
             this.jumpTime = 15
         } else {
             this.jumpTime = jumpTime
@@ -167,7 +167,11 @@ export default class core {
             } else {
                 backwardButton.className = backwardClass
             }
-            backwardButton.innerHTML = '&#8634'
+            if (backwardIcon === undefined || backwardIcon === '') {
+                backwardButton.innerHTML = '&#8634'
+            } else {
+                backwardButton.innerHTML = backwardIcon
+            }
             backwardButton.addEventListener('click', () => {
                 this.audio.currentTime -= this.jumpTime
                 this.audio.play()
@@ -181,7 +185,12 @@ export default class core {
             } else {
                 forwardButton.className = forwardClass
             }
-            forwardButton.innerHTML = '&#8635'
+            if (forwardIcon === undefined || forwardIcon === '') {
+                forwardButton.innerHTML = '&#8635'
+            } else {
+                forwardButton.innerHTML = forwardIcon
+
+            }
             forwardButton.addEventListener('click', () => {
                 this.audio.currentTime += this.jumpTime
                 this.audio.play()
@@ -294,7 +303,7 @@ export default class core {
 
         let timer = {}
         timer.current = this.current
-        timer.duration = this.duration
+        timer.duration = duration
         return timer
     }
 
@@ -387,7 +396,7 @@ export default class core {
             contentWrap.appendChild(content)
 
             galleryItem.appendChild(imgWrap)
-            galleryItem.appendChild(contextWrap)
+            galleryItem.appendChild(contentWrap)
 
             // gallery.appendChild(galleryItem)
             gallery.items.push(galleryItem)
@@ -397,7 +406,7 @@ export default class core {
         // let galleryItems = this.gallery.children
         this.galleryItems = gallery.items
         this.gallerySelectIndex = 0
-        this.gallerySelectTimePoint = galleryItems[this.gallerySelectIndex].getAttribute('time-point')
+        this.gallerySelectTimePoint = this.galleryItems[this.gallerySelectIndex].getAttribute('time-point')
         this.galleryItems[this.gallerySelectIndex].classList.add(this.galleryActiveClass)
 
         return gallery  
@@ -412,7 +421,7 @@ export default class core {
         this.tagLineLoad = true
 
         if (tagItemClass === undefined || tagItemClass === '') {
-            this.tagItemClass = 'tag-line-item'
+            this.tagItemClass = 'item'
         } else {
             this.tagItemClass = tagItemClass
         }
@@ -424,14 +433,11 @@ export default class core {
             this.progressDistance = progressDistance
         }
 
-        let wrapWrap = document.createElement('div')
-        wrapWrap.className = 'tag-line'
-
-        let wrap = document.createElement('div')
-        wrap.className = 'tag-line-wrap'
+        let progressWrap = document.createElement('div')
+        progressWrap.className = 'progress-wrap'
 
         this.progress = document.createElement('div')
-        this.progress.className = 'tag-line-progress'
+        this.progress.className = 'progress'
 
         for (let index = 0; index < this.data.length; index++) {
             let item = document.createElement('figure')
@@ -443,13 +449,14 @@ export default class core {
             timeLine.className = 'time-line'
 
             let title = document.createElement('div')
+            title.className = 'title'
             title.innerText = this.data[index].title
 
             let timeMark = document.createElement('div')
             timeMark.className = 'time-mark'
             timeMark.innerText = timeFormat(this.data[index].timePoint)
 
-            item.appendChild(line)
+            item.appendChild(timeLine)
             item.appendChild(title)
             item.appendChild(timeMark)
 
@@ -461,16 +468,18 @@ export default class core {
             this.progress.appendChild(item)
         }
 
-        wrap.appendChild(this.progress)
+        progressWrap.appendChild(this.progress)
 
         let timePointLine = document.createElement('div')
         timePointLine.className = 'time-point-line'
 
-        wrapWrap.appendChild(midLine)
-        wrapWrap.appendChild(wrap)
+        let wrap = document.createElement('div')
+        wrap.className = 'tag-line'
+        wrap.appendChild(timePointLine)
+        wrap.appendChild(progressWrap)
 
         tagLineDrag({
-            tagLine: wrapWrap,
+            tagLine: wrap,
             audio: this.audio,
             progressDistance: this.progressDistance,
             progress: this.progress
@@ -479,7 +488,7 @@ export default class core {
         let tagLine = {}
         tagLine.timePointLine = timePointLine
         tagLine.progress = this.progress
-        tagLine.wrapWrap = wrapWrap
+        tagLine.wrap = wrap
 
         return tagLine
     }

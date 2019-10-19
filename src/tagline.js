@@ -9,9 +9,13 @@ export const tagLineDrag = ({ tagLine, audio, progressDistance, progress }) => {
     tagLine.addEventListener('mousedown', e => {
         mouseDownFlag = true
         startX = e.clientX
+        audio.pause()
     })
     document.addEventListener('mouseup', e => {
-        mouseDownFlag = false
+        if (mouseDownFlag) {
+            audio.play()
+            mouseDownFlag = false
+        }
     })
     document.addEventListener('mousemove', e => {
         if (mouseDownFlag) {
@@ -25,7 +29,7 @@ export const tagLineDrag = ({ tagLine, audio, progressDistance, progress }) => {
             audio.currentTime = audio.currentTime + timeOffset
             // update progress position
             progress.setAttribute('style', 'transform: translateX(-'+ audio.currentTime * progressDistance +'px);')
-            audio.play()
+            // audio.play()
         }
     })
 }

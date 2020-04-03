@@ -70,7 +70,7 @@ export default class core {
     // watch audio playing
     watchPlay () {
         let setIntervalObj
-        this.audio.addEventListener('timeupdate', () => {
+        this.audio.addEventListener('play', () => {
             // shift icon
             this.playButton.innerHTML = this.pauseIcon
 
@@ -92,12 +92,14 @@ export default class core {
 
                 // gallery seek active item
                 if (this.galleryLoad) {
-                    this.galleryIndex = galleryActive({
+                    galleryActive({
                         audio: this.audio,
+                        // gallerySelectIndex: this.gallerySelectIndex,
+                        // gallerySelectTimePoint: this.gallerySelectTimePoint,
+                        gallerySelect: this.gallerySelect,
                         galleryItems: this.galleryItems,
                         itemClass: this.galleryItemClass,
-                        activeClass: this.galleryActiveClass,
-                        galleryIndex: this.galleryIndex
+                        activeClass: this.galleryActiveClass
                     })
                 }
 
@@ -110,7 +112,7 @@ export default class core {
                     })
                 }
             }, this.updateTime)
-        }, false)
+        })
 
         this.audio.addEventListener('pause', () => {
             this.playButton.innerHTML = this.playIcon
@@ -401,9 +403,15 @@ export default class core {
         }
 
         // init gallery, default select first timepoint
+        // let galleryItems = this.gallery.children
         this.galleryItems = gallery.items
-        this.galleryIndex = 0
-        this.galleryItems[this.galleryIndex].classList.add(this.galleryActiveClass)
+        this.gallerySelect = {}
+        this.gallerySelect.index = 0
+        this.gallerySelect.timePoint = this.galleryItems[this.gallerySelect.index].getAttribute('time-point')
+        // this.gallerySelectIndex = 0
+        // this.gallerySelectTimePoint = this.galleryItems[this.gallerySelectIndex].getAttribute('time-point')
+        // this.galleryItems[this.gallerySelectIndex].classList.add(this.galleryActiveClass)
+        this.galleryItems[this.gallerySelect.index].classList.add(this.galleryActiveClass)
 
         return gallery  
     }

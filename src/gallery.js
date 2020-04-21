@@ -12,12 +12,6 @@ export const galleryActive = ({ audio, galleryItems, itemClass, activeClass, gal
 
     // 如果当前播放时间不在 selectItem 时间范围 [gallerySelectTimePoint, nextTimePoint), 则查找
     if (audio.currentTime < selectTimePoint || audio.currentTime >= nextTimePoint) {
-        // 下面3哥一直没更新？？？
-        // console.log('gallerySelectIndex:' + gallerySelectIndex)
-        // console.log('gallerySelectTimePoint:' + gallerySelectTimePoint)
-        // console.log('nextTimePoint:' + nextTimePoint)
-        // console.log('currentTime:' + audio.currentTime)
-        // console.log('查找时间')
         // 遍历 galleryItems 并查找
         for (let index = 0; index < galleryItems.length; index++) {
             let timePoint = galleryItems[index].getAttribute('time-point')

@@ -1,4 +1,4 @@
-import { timeFormat } from './utils/timeFormat.js'
+import { timeFormat } from '../utils/timeFormat.js'
 import { mouseMoveDot, mouseClickProgressBar } from './timeline.js'
 import { galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'

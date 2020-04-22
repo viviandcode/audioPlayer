@@ -1,4 +1,4 @@
-import core from "./core.js"
+import core from "./libs/core.js"
 
 export default class player {
     constructor({ id, updateTimer }) {

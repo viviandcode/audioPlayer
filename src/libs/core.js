@@ -6,12 +6,11 @@ import { mouseMoveVolumeDot, mouseClickVolumeProgressBar } from './volume.js'
 
 export default class core {
     constructor({ src, updateTime }) {
-        // load flag
+        // init status
         this.timerLoad = false
         this.timelineLoad = false
         this.galleryLoad = false
         this.tagLineLoad = false
-
 
         // audio element
         this.audio = document.createElement('audio')
@@ -28,7 +27,7 @@ export default class core {
             this.updateTime = 20
         }
 
-        this.watchPlay()
+        this.monitor()
     }
 
     set src (src) {
@@ -67,8 +66,8 @@ export default class core {
         this.data = data
     }
 
-    // watch audio playing
-    watchPlay () {
+    // monitor audio playing
+    monitor () {
         let setIntervalObj
         this.audio.addEventListener('timeupdate', () => {
             // shift icon
@@ -249,9 +248,6 @@ export default class core {
             _muteIcon = muteIcon
         }
 
-        // let progressWrap = document.createElement('div')
-        // progressWrap.className = 'progress-wrap'
-
         let progressBar = document.createElement('div')
         progressBar.className = 'progress-bar'
 
@@ -308,9 +304,6 @@ export default class core {
     timeline ({ dotFunction, progressFunction }) {
         this.timelineLoad = true
 
-        // let timeline = document.createElement('div')
-        // timeline.className = 'timeline'
-
         let progressBar = document.createElement('div')
         progressBar.className = 'progress-bar'
 
@@ -355,9 +348,6 @@ export default class core {
         } else {
             this.galleryActiveClass = activeClass
         }
-        
-        // let gallery = document.createElement('div')
-        // gallery.className = 'gallery-wrap'
 
         let gallery = {}
         gallery.items = []
@@ -396,7 +386,6 @@ export default class core {
             galleryItem.appendChild(imgWrap)
             galleryItem.appendChild(contentWrap)
 
-            // gallery.appendChild(galleryItem)
             gallery.items.push(galleryItem)
         }
 

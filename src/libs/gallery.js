@@ -21,8 +21,8 @@ export const galleryActive = ({ audio, galleryItems, itemClass, activeClass, gal
 
             // 找到最后一个符合范围的 timePoint, 更新 this.gallerySelectIndex
             if (audio.currentTime >=  timePoint) {
-                console.log('found')
-                console.log('timePoint:' + timePoint)
+                // console.log('found')
+                // console.log('timePoint:' + timePoint)
                 galleryIndex = index
             }
         }

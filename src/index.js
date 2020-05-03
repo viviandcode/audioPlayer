@@ -21,14 +21,14 @@ theplayer.playButton({
     pauseIcon: '<i class="fa fa-pause" aria-hidden="true"></i>'
 })
 
-theplayer.jumpButton({
+theplayer.skipTimeButton({
     backward: true,
     backwardIcon: '<i class="fa fa-undo" aria-hidden="true"></i>',
     forward: true,
     forwardIcon: '<i class="fa fa-repeat" aria-hidden="true"></i>'
 })
 
-theplayer.changeButton({
+theplayer.prevNextButton({
     prev: true,
     prevIcon: '<i class="fa fa-backward" aria-hidden="true"></i>',
     prevFunc () { console.log('prev fuction') },

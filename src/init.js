@@ -85,16 +85,16 @@ export default class player {
         this.playController.appendChild(this.playButton)
     }
 
-    jumpButton ({ jumpTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
-        this.jumpButton = this.core.jumpButton({ jumpTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon })
-        this.playController.insertBefore(this.jumpButton.backwardButton, this.playButton)
-        this.playController.appendChild(this.jumpButton.forwardButton)
+    skipTimeButton ({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
+        this.skipTimeButton = this.core.skipTimeButton({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon })
+        this.playController.insertBefore(this.skipTimeButton.backwardButton, this.playButton)
+        this.playController.appendChild(this.skipTimeButton.forwardButton)
     }
 
-    changeButton ({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc }) {
-        this.changeButton = this.core.changeButton({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc })
-        this.playController.insertBefore(this.changeButton.prevButton, this.jumpButton.backwardButton)
-        this.playController.appendChild(this.changeButton.nextButton)
+    prevNextButton ({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc }) {
+        this.prevNextButton = this.core.prevNextButton({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc })
+        this.playController.insertBefore(this.prevNextButton.prevButton, this.skipTimeButton.backwardButton)
+        this.playController.appendChild(this.prevNextButton.nextButton)
     }
 
     volumeController ({ volumeIcon, muteIcon }) {

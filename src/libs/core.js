@@ -1,18 +1,18 @@
 import { timeFormat } from '../utils/timeFormat.js'
-import { mouseMoveDot, mouseClickProgressBar } from './timeline.js'
+import { timelinePlayProcess, mouseMoveTimelineDot, mouseClickProgressBar } from './timeline.js'
 import { galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'
 import { mouseMoveVolumeDot, mouseClickVolumeProgressBar } from './volume.js'
 
 export default class core {
     constructor({ src, updateTime }) {
-        // init status
-        this.timerLoad = false
-        this.timelineLoad = false
-        this.galleryLoad = false
-        this.tagLineLoad = false
+        // init modules load status
+        this.timerLoaded = false
+        this.timelineLoaded = false
+        this.galleryLoaded = false
+        this.tagLineLoaded = false
 
-        // audio element
+        // create audio element
         this.audio = document.createElement('audio')
         this.audio.classList.add('audio')
 
@@ -20,12 +20,14 @@ export default class core {
             this.audio.src = src
         }
 
-        // updateTime default 20 millisecond
+        // updateTime, default 20 millisecond
         if (updateTime !== undefined && updateTime !== 0) {
             this.updateTime = updateTime
         } else {
             this.updateTime = 20
         }
+        this.timelineCurrentDotDragStatus = {}
+        this.timelineCurrentDotDragStatus.status = false
 
         this.monitor()
     }
@@ -66,31 +68,34 @@ export default class core {
         this.data = data
     }
 
-    // monitor audio playing
+    // monitor play process
     monitor () {
         let setIntervalObj
-        this.audio.addEventListener('timeupdate', () => {
-            // shift icon
+        this.audio.addEventListener('play', () => {
+            // change play button icon
             this.playButton.innerHTML = this.pauseIcon
 
             setIntervalObj = setInterval(() => {
                 // update timer
-                if (this.timerLoad) {
+                if (this.timerLoaded) {
                     this.current.innerText = timeFormat(this.audio.currentTime)
                 }
 
-                // update dot postation
-                if (this.timelineLoad) {
-                    let progressPer = this.audio.currentTime / this.audio.duration
-                    if (progressPer <= 1) {
-                        this.dot.style.left = progressPer * 100 + '%'
-                    } else {
-                        this.dot.style.left = '100%'
-                    }
+                // update timeline dot postation
+                if (this.timelineLoaded) {
+ 
+                    // let progressPer = this.audio.currentTime / this.audio.duration
+                    // if (progressPer <= 1) {
+                    //     this.timelineCurrentDot.style.left = progressPer * 100 + '%'
+                    // } else {
+                    //     this.timelineCurrentDot.style.left = '100%'
+                    // }
+                    timelinePlayProcess(this.audio,this.timelineCurrentDot,this.timelineCurrentDotDragStatus)
+                    console.log(this.timelineCurrentDotDragStatus)
                 }
 
                 // gallery seek active item
-                if (this.galleryLoad) {
+                if (this.galleryLoaded) {
                     this.galleryIndex = galleryActive({
                         audio: this.audio,
                         galleryItems: this.galleryItems,
@@ -101,7 +106,7 @@ export default class core {
                 }
 
                 // tag line
-                if (this.tagLineLoad) {
+                if (this.tagLineLoaded) {
                     tagLineProgress({
                         audio: this.audio,
                         progressDistance: this.progressDistance,
@@ -148,13 +153,13 @@ export default class core {
         return this.playButton
     }
 
-    jumpButton ({ jumpTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
+    skipTimeButton ({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
         let backwardButton, forwardButton
 
-        if (jumpTime === undefined || jumpTime === 0) {
-            this.jumpTime = 15
+        if (skipTime === undefined || skipTime === 0) {
+            this.skipTime = 15
         } else {
-            this.jumpTime = jumpTime
+            this.skipTime = skipTime
         }
 
         if (backward) {
@@ -170,7 +175,7 @@ export default class core {
                 backwardButton.innerHTML = backwardIcon
             }
             backwardButton.addEventListener('click', () => {
-                this.audio.currentTime -= this.jumpTime
+                this.audio.currentTime -= this.skipTime
                 this.audio.play()
             })
         }
@@ -189,7 +194,7 @@ export default class core {
 
             }
             forwardButton.addEventListener('click', () => {
-                this.audio.currentTime += this.jumpTime
+                this.audio.currentTime += this.skipTime
                 this.audio.play()
             })
         }
@@ -201,9 +206,9 @@ export default class core {
         return jumpButton
     }
 
-    changeButton ({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc }) {
+    prevNextButton ({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc }) {
         let prevButton, nextButton
-        let changeButton = {}
+        let prevNextButton = {}
         if (prev) {
             prevButton = document.createElement('button')
             prevButton.className = 'prev-button'
@@ -217,7 +222,7 @@ export default class core {
                     prevFunc()
                 }
             })
-            changeButton.prevButton = prevButton
+            prevNextButton.prevButton = prevButton
         }
         if (next) {
             nextButton = document.createElement('button')
@@ -232,10 +237,10 @@ export default class core {
                     nextFunc()
                 }
             })
-            changeButton.nextButton = nextButton
+            prevNextButton.nextButton = nextButton
         }
 
-        return changeButton
+        return prevNextButton
     }
 
     volumeController ({ volumeIcon, muteIcon }) {
@@ -282,7 +287,7 @@ export default class core {
     }
 
     timer () {
-        this.timerLoad = true
+        this.timerLoaded = true
 
         this.current = document.createElement('div')
         this.current.className = 'current'
@@ -302,31 +307,40 @@ export default class core {
     }
 
     timeline ({ dotFunction, progressFunction }) {
-        this.timelineLoad = true
+        this.timelineLoaded = true
 
         let progressBar = document.createElement('div')
         progressBar.className = 'progress-bar'
 
-        this.dot = document.createElement('command')
-        this.dot.className = 'dot'
+        this.timelineCurrentDot = document.createElement('command')
+        this.timelineCurrentDot.className = 'dot'
 
         if (dotFunction === undefined) {
-            mouseMoveDot(this.audio, this.dot, progressBar)
+            mouseMoveTimelineDot(this.audio,this.timelineCurrentDot,progressBar,this.timelineCurrentDotDragStatus)
         } else {
-            dotFunction(this.audio, this.dot, progressBar)
+            dotFunction({
+                audio: this.audio,
+                dot: this.timelineCurrentDot,
+                progressBar: progressBar,
+                dotDragStatus: this.timelineCurrentDotDragStatus
+            })
         }
 
         if (progressFunction === undefined) {
-            mouseClickProgressBar(this.audio, this.dot, progressBar)
+            mouseClickProgressBar(this.audio,this.timelineCurrentDot,progressBar,this.timelineCurrentDotDragStatus)
         } else {
-            progressFunction(this.audio, this.dot, progressBar)
+            progressFunction({
+                audio: this.audio,
+                dot: this.timelineCurrentDot,
+                progressBar: progressBar
+            })
         }
 
-        progressBar.appendChild(this.dot)
+        progressBar.appendChild(this.timelineCurrentDot)
+
 
         let timeline = {}
         timeline.progressBar = progressBar
-        // timeline.dot = this.dot
         return timeline
     }
 
@@ -336,7 +350,7 @@ export default class core {
             return false
         }
 
-        this.galleryLoad = true
+        this.galleryLoaded = true
 
         if (itemClass === undefined || itemClass === '') {
             this.galleryItemClass = 'gallery-item'
@@ -403,7 +417,7 @@ export default class core {
             return false
         }
 
-        this.tagLineLoad = true
+        this.tagLineLoaded = true
 
         if (tagItemClass === undefined || tagItemClass === '') {
             this.tagItemClass = 'item'

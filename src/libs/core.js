@@ -12,6 +12,10 @@ export default class core {
         this.galleryLoaded = false
         this.tagLineLoaded = false
 
+        // declare a object, passing by referrence
+        this.timelineCurrentDot = {}
+        this.timelineCurrentDot.status = false
+
         // create audio element
         this.audio = document.createElement('audio')
         this.audio.classList.add('audio')
@@ -26,8 +30,6 @@ export default class core {
         } else {
             this.updateTime = 20
         }
-        this.timelineCurrentDotDragStatus = {}
-        this.timelineCurrentDotDragStatus.status = false
 
         this.monitor()
     }
@@ -83,15 +85,10 @@ export default class core {
 
                 // update timeline dot postation
                 if (this.timelineLoaded) {
- 
-                    // let progressPer = this.audio.currentTime / this.audio.duration
-                    // if (progressPer <= 1) {
-                    //     this.timelineCurrentDot.style.left = progressPer * 100 + '%'
-                    // } else {
-                    //     this.timelineCurrentDot.style.left = '100%'
-                    // }
-                    timelinePlayProcess(this.audio,this.timelineCurrentDot,this.timelineCurrentDotDragStatus)
-                    console.log(this.timelineCurrentDotDragStatus)
+                    timelinePlayProcess({
+                        audio: this.audio,
+                        dot: this.timelineCurrentDot
+                    })
                 }
 
                 // gallery seek active item
@@ -312,22 +309,29 @@ export default class core {
         let progressBar = document.createElement('div')
         progressBar.className = 'progress-bar'
 
-        this.timelineCurrentDot = document.createElement('command')
-        this.timelineCurrentDot.className = 'dot'
+        this.timelineCurrentDot.dom = document.createElement('command')
+        this.timelineCurrentDot.dom.className = 'dot'
 
         if (dotFunction === undefined) {
-            mouseMoveTimelineDot(this.audio,this.timelineCurrentDot,progressBar,this.timelineCurrentDotDragStatus)
+            mouseMoveTimelineDot({
+                audio: this.audio,
+                dot: this.timelineCurrentDot,
+                progressBar: progressBar
+            })
         } else {
             dotFunction({
                 audio: this.audio,
                 dot: this.timelineCurrentDot,
-                progressBar: progressBar,
-                dotDragStatus: this.timelineCurrentDotDragStatus
+                progressBar: progressBar
             })
         }
 
         if (progressFunction === undefined) {
-            mouseClickProgressBar(this.audio,this.timelineCurrentDot,progressBar,this.timelineCurrentDotDragStatus)
+            mouseClickProgressBar({
+                audio: this.audio,
+                dot: this.timelineCurrentDot,
+                progressBar: progressBar
+            })
         } else {
             progressFunction({
                 audio: this.audio,
@@ -336,8 +340,7 @@ export default class core {
             })
         }
 
-        progressBar.appendChild(this.timelineCurrentDot)
-
+        progressBar.appendChild(this.timelineCurrentDot.dom)
 
         let timeline = {}
         timeline.progressBar = progressBar

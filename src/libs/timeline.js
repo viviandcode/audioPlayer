@@ -1,63 +1,51 @@
-// playing
-export const timelinePlayProcess = (audio, dot, dotDragStatus) => {
-    if (!dotDragStatus.status) {
+// audio playing process
+export const timelinePlayProcess = ({ audio, dot }) => {
+    if (!dot.status) {
         let progressPer = audio.currentTime / audio.duration
         if (progressPer <= 1) {
-            dot.style.left = progressPer * 100 + '%'
+            dot.dom.style.left = progressPer * 100 + '%'
         } else {
-            dot.style.left = '100%'
+            dot.dom.style.left = '100%'
         }
     }
 }
 
 // mouse move timeline dot
-export const mouseMoveTimelineDot = (audio, dot, progressBar, dotDragStatus) => {
-    let mouseDownStatus = false
+export const mouseMoveTimelineDot = ({ audio, dot, progressBar }) => {
     let precessPer = 0
-    dot.addEventListener('mousedown', () => {
-        mouseDownStatus = true
-        dotDragStatus.status = true
-
-        // audio.pause()
+    dot.dom.addEventListener('mousedown', () => {
+        dot.status = true
     })
     document.addEventListener('mouseup', () => {
-        if (mouseDownStatus) {
-            console.log('1')
+        if (dot.status) {
             audio.currentTime = precessPer * audio.duration
             audio.play()
-            mouseDownStatus = false
-            dotDragStatus.status = false
+            dot.status = false
 
         }
     })
     document.addEventListener('mousemove', e => {
-        if (mouseDownStatus) {
-            dotDragStatus.status = true
+        if (dot.status) {
+            dot.status = true
 
             let currentX = e.clientX - progressBar.getBoundingClientRect().left
-            let per = currentX / progressBar.offsetWidth
+            precessPer = currentX / progressBar.offsetWidth
 
             if (currentX < 0) {
-                dot.style.left = "0%"
+                dot.dom.style.left = "0%"
             } else if (currentX > progressBar.offsetWidth) {
-                dot.style.left = "100%"
+                dot.dom.style.left = "100%"
             } else {
-                dot.style.left = per * 100 + "%"
+                dot.dom.style.left = precessPer * 100 + "%"
             }
-
-            // update audio play time
-            // audio.currentTime = per * audio.duration
-            // audio.play()
-
-            precessPer = per
         }
     })
 }
 
 // mouse click progress bar
-export const mouseClickProgressBar = (audio, dot, progressBar) => {
+export const mouseClickProgressBar = ({ audio, dot, progressBar }) => {
     progressBar.addEventListener('click', e => {
-        dot.style.left = (e.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth * 100 + "%"
+        dot.dom.style.left = (e.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth * 100 + "%"
         audio.currentTime = (e.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth * audio.duration
         audio.play()
     })

@@ -98,7 +98,7 @@ export default class player {
     }
 
     volumeController ({ volumeIcon, muteIcon }) {
-        this.volumeController = this.core.volumeController({ volumeIcon, muteIcon })
+        this.volumeController = this.core.volumeBuild({ volumeIcon, muteIcon })
         let volumeWrap = document.createElement('div')
         volumeWrap.className = 'volume'
         volumeWrap.appendChild(this.volumeController.audioButton)

@@ -31,14 +31,13 @@ export const volumeInit = ({ audio, volumeIcon, muteIcon }) => {
         }
     })
 
-    mouseMoveVolumeDot(this.audio, dot, progressBar)
-    mouseClickVolumeProgressBar(this.audio, dot, progressBar)
+    mouseMoveVolumeDot(audio, dot, progressBar)
+    mouseClickVolumeProgressBar(audio, dot, progressBar)
 
-    let volumeController = {}
-    volumeController.progressBar = progressBar
-    // volumeController.dot = dot
-    volumeController.audioButton = audioButton
-    return volumeController
+    let volumeDom = {}
+    volumeDom.progressBar = progressBar
+    volumeDom.audioButton = audioButton
+    return volumeDom
 }
 
 // mouse move dot

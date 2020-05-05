@@ -1,5 +1,6 @@
 import { timeFormat } from '../utils/timeFormat.js'
 import { playButtonInit } from './playButton.js'
+import { volumeInit } from './volume.js'
 import { timerInit, timerPlayProcess } from './timer.js'
 import { timelineInit, timelinePlayProcess } from './timeline.js'
 import { galleryActive } from './gallery.js'
@@ -33,7 +34,7 @@ export default class core {
             this.audio.src = src
         }
 
-        // updateTime, default 20 millisecond
+        // updateTime, default step 20 millisecond
         if (updateTime !== undefined && updateTime !== 0) {
             this.updateTime = updateTime
         } else {
@@ -232,47 +233,12 @@ export default class core {
         return prevNextButton
     }
 
-    volumeController ({ volumeIcon, muteIcon }) {
-        let _volumeIcon = '&#9836'
-        if (volumeIcon !== undefined && volumeIcon !== '') {
-            _volumeIcon = volumeIcon
-        }
-        let _muteIcon = '&#9834'
-        if (muteIcon !== undefined && muteIcon !== '') {
-            _muteIcon = muteIcon
-        }
-
-        let progressBar = document.createElement('div')
-        progressBar.className = 'progress-bar'
-
-        let dot = document.createElement('command')
-        dot.className = 'dot'
-        dot.style.left = this.audio.volume * 100 + '%'
-
-        progressBar.appendChild(dot)
-
-        let audioButton = document.createElement('div')
-        audioButton.className = 'audio-button'
-        audioButton.innerHTML = _volumeIcon
-
-        audioButton.addEventListener('click', () => {
-            if (this.audio.muted) {
-                this.audio.muted = false
-                audioButton.innerHTML = _volumeIcon
-            } else {
-                this.audio.muted = true
-                audioButton.innerHTML = _muteIcon
-            }
+    volumeBuild ({ volumeIcon, muteIcon }) {
+        return volumeInit({
+            audio: this.audio,
+            volumeIcon: volumeIcon,
+            muteIcon: muteIcon
         })
-
-        mouseMoveVolumeDot(this.audio, dot, progressBar)
-        mouseClickVolumeProgressBar(this.audio, dot, progressBar)
-
-        let volumeController = {}
-        volumeController.progressBar = progressBar
-        // volumeController.dot = dot
-        volumeController.audioButton = audioButton
-        return volumeController
     }
 
     timerBuild () {

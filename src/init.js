@@ -86,13 +86,13 @@ export default class player {
     }
 
     skipTimeButton ({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
-        this.skipTimeButton = this.core.skipTimeButton({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon })
+        this.skipTimeButton = this.core.skipTimeButtonBuild({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon })
         this.playController.insertBefore(this.skipTimeButton.backwardButton, this.playButton.dom)
         this.playController.appendChild(this.skipTimeButton.forwardButton)
     }
 
     prevNextButton ({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc }) {
-        this.prevNextButton = this.core.prevNextButton({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc })
+        this.prevNextButton = this.core.prevNextButtonBuild({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc })
         this.playController.insertBefore(this.prevNextButton.prevButton, this.skipTimeButton.backwardButton)
         this.playController.appendChild(this.prevNextButton.nextButton)
     }
@@ -112,8 +112,8 @@ export default class player {
         this.timelineWrap.appendChild(this.timer.duration)
     }
 
-    timeline ({ moveDotFunction, clickProcessbarFunction }) {
-        this.timeline = this.core.timelineBuild({ moveDotFunction, clickProcessbarFunction })
+    timeline ({ moveDotCustomFunction, clickProcessbarCustomFunction }) {
+        this.timeline = this.core.timelineBuild({ moveDotCustomFunction, clickProcessbarCustomFunction })
         let timeline = document.createElement('div')
         timeline.className = 'timeline'
         timeline.appendChild(this.timeline.dom.progressBar)

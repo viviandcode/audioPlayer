@@ -1,11 +1,12 @@
 import { timeFormat } from '../utils/timeFormat.js'
 import { playButtonInit } from './playButton.js'
+import { skipTimeButtonInit } from './skipTimeButton.js'
+import { prevNextButtonInit } from './prevNextButton.js'
 import { volumeInit } from './volume.js'
 import { timerInit, timerPlayProcess } from './timer.js'
 import { timelineInit, timelinePlayProcess } from './timeline.js'
 import { galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'
-import { mouseMoveVolumeDot, mouseClickVolumeProgressBar } from './volume.js'
 
 export default class core {
     constructor({ src, updateTime }) {
@@ -143,94 +144,28 @@ export default class core {
         return this.playButton
     }
 
-    skipTimeButton ({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
-        let backwardButton, forwardButton
-
-        if (skipTime === undefined || skipTime === 0) {
-            this.skipTime = 15
-        } else {
-            this.skipTime = skipTime
-        }
-
-        if (backward) {
-            backwardButton = document.createElement('button')
-            if (backwardClass === undefined || backwardClass === '') {
-                backwardButton.className = 'backward-button'
-            } else {
-                backwardButton.className = backwardClass
-            }
-            if (backwardIcon === undefined || backwardIcon === '') {
-                backwardButton.innerHTML = '&#8634'
-            } else {
-                backwardButton.innerHTML = backwardIcon
-            }
-            backwardButton.addEventListener('click', () => {
-                this.audio.currentTime -= this.skipTime
-                this.audio.play()
-            })
-        }
-
-        if (forward) {
-            forwardButton = document.createElement('button')
-            if (forwardClass === undefined || forwardClass === '') {
-                forwardButton.className = 'forward-button'
-            } else {
-                forwardButton.className = forwardClass
-            }
-            if (forwardIcon === undefined || forwardIcon === '') {
-                forwardButton.innerHTML = '&#8635'
-            } else {
-                forwardButton.innerHTML = forwardIcon
-
-            }
-            forwardButton.addEventListener('click', () => {
-                this.audio.currentTime += this.skipTime
-                this.audio.play()
-            })
-        }
-
-        let jumpButton = {}
-        jumpButton.backwardButton = backwardButton
-        jumpButton.forwardButton = forwardButton
-
-        return jumpButton
+    skipTimeButtonBuild ({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
+        return skipTimeButtonInit({
+            audio: this.audio,
+            skipTime: skipTime,
+            backward: backward,
+            backwardClass: backwardClass,
+            backwardIcon: backwardIcon,
+            forward: forward,
+            forwardClass: forwardClass,
+            forwardIcon: forwardIcon
+        })
     }
 
-    prevNextButton ({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc }) {
-        let prevButton, nextButton
-        let prevNextButton = {}
-        if (prev) {
-            prevButton = document.createElement('button')
-            prevButton.className = 'prev-button'
-            if (prevIcon === undefined || prevIcon === '') {
-                prevButton.innerHTML = '&#8678'
-            } else {
-                prevButton.innerHTML = prevIcon
-            }
-            prevButton.addEventListener('click', () => {
-                if (prevFunc !== undefined) {
-                    prevFunc()
-                }
-            })
-            prevNextButton.prevButton = prevButton
-        }
-        if (next) {
-            nextButton = document.createElement('button')
-            nextButton.className = 'next-button'
-            if (nextIcon === undefined || nextIcon === '') {
-                nextButton.innerHTML = '&#8680'
-            } else {
-                nextButton.innerHTML = nextIcon
-            }
-            nextButton.addEventListener('click', () => {
-                if (nextFunc !== undefined) {
-                    nextFunc()
-                }
-            })
-            prevNextButton.nextButton = nextButton
-        }
-
-        return prevNextButton
+    prevNextButtonBuild ({ prev, prevIcon, prevFunc, next, nextIcon, nextFunc }) {
+        return prevNextButtonInit({
+            prev: prev,
+            prevIcon: prevIcon,
+            prevFunc: prevFunc,
+            next: next,
+            nextIcon: nextIcon,
+            nextFunc: nextFunc
+        })
     }
 
     volumeBuild ({ volumeIcon, muteIcon }) {
@@ -249,12 +184,12 @@ export default class core {
         return this.timer
     }
 
-    timelineBuild ({ moveDotFunction, clickProcessbarFunction }) {
+    timelineBuild ({ moveDotCustomFunction, clickProcessbarCustomFunction }) {
         timelineInit({
             audio: this.audio,
             timeline: this.timeline,
-            moveDotFunction: moveDotFunction,
-            clickProcessbarFunction: clickProcessbarFunction
+            moveDotFunction: moveDotCustomFunction,
+            clickProcessbarFunction: clickProcessbarCustomFunction
         })
         return this.timeline
     }

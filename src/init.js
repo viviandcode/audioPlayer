@@ -107,7 +107,7 @@ export default class player {
     }
 
     timer () {
-        this.timer = this.core.timer()
+        this.timer = this.core.timerBuild()
         this.timelineWrap.appendChild(this.timer.current)
         this.timelineWrap.appendChild(this.timer.duration)
     }

@@ -1,4 +1,5 @@
 import { timeFormat } from '../utils/timeFormat.js'
+import { timerInit } from './timer.js'
 import { timelineInit, timelinePlayProcess, mouseMoveTimelineDot, mouseClickProgressBar } from './timeline.js'
 import { galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'
@@ -8,11 +9,8 @@ export default class core {
     constructor({ src, updateTime }) {
         // declare a object, passing by referrence
         // init modules load status
-
         this.timer = {}
         this.timer.loaded = false
-        
-        // this.timerLoaded = false
 
         this.timeline = {}
         this.timeline.loaded = false
@@ -77,7 +75,7 @@ export default class core {
         this.data = data
     }
 
-    // monitor play process
+    // monitor audio playing
     monitor () {
         let setIntervalObj
         this.audio.addEventListener('play', () => {
@@ -86,8 +84,8 @@ export default class core {
 
             setIntervalObj = setInterval(() => {
                 // update timer
-                if (this.timerLoaded) {
-                    this.current.innerText = timeFormat(this.audio.currentTime)
+                if (this.timer.loaded) {
+                    this.timer.current.innerText = timeFormat(this.audio.currentTime)
                 }
 
                 // update timeline dot postation
@@ -290,24 +288,12 @@ export default class core {
         return volumeController
     }
 
-    timer () {
-        this.timerLoaded = true
-
-        this.current = document.createElement('div')
-        this.current.className = 'current'
-
-        let duration = document.createElement('div')
-        duration.className = 'duration'
-
-        this.audio.addEventListener('loadeddata', () => {
-            this.current.innerText = '00:00:00'
-            duration.innerText = timeFormat(this.audio.duration)
+    timerBuild () {
+        timerInit ({
+            audio: this.audio,
+            timer: this.timer
         })
-
-        let timer = {}
-        timer.current = this.current
-        timer.duration = duration
-        return timer
+        return this.timer
     }
 
     timelineBuild ({ moveDotFunction, clickProcessbarFunction }) {

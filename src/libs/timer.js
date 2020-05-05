@@ -16,3 +16,7 @@ export const timerInit = ({ audio, timer }) => {
 
     timer.duration = duration
 }
+
+export const timerPlayProcess = ({ audio, timer }) => {
+    timer.current.innerText = timeFormat(audio.currentTime)
+}

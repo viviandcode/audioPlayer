@@ -1,6 +1,6 @@
 import { timeFormat } from '../utils/timeFormat.js'
-import { timerInit } from './timer.js'
-import { timelineInit, timelinePlayProcess, mouseMoveTimelineDot, mouseClickProgressBar } from './timeline.js'
+import { timerInit, timerPlayProcess } from './timer.js'
+import { timelineInit, timelinePlayProcess } from './timeline.js'
 import { galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'
 import { mouseMoveVolumeDot, mouseClickVolumeProgressBar } from './volume.js'
@@ -85,7 +85,10 @@ export default class core {
             setIntervalObj = setInterval(() => {
                 // update timer
                 if (this.timer.loaded) {
-                    this.timer.current.innerText = timeFormat(this.audio.currentTime)
+                    timerPlayProcess({
+                        audio: this.audio,
+                        timer: this.timer
+                    })
                 }
 
                 // update timeline dot postation

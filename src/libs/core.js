@@ -1,20 +1,25 @@
 import { timeFormat } from '../utils/timeFormat.js'
-import { timelinePlayProcess, mouseMoveTimelineDot, mouseClickProgressBar } from './timeline.js'
+import { timelineInit, timelinePlayProcess, mouseMoveTimelineDot, mouseClickProgressBar } from './timeline.js'
 import { galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'
 import { mouseMoveVolumeDot, mouseClickVolumeProgressBar } from './volume.js'
 
 export default class core {
     constructor({ src, updateTime }) {
+        // declare a object, passing by referrence
         // init modules load status
         this.timerLoaded = false
-        this.timelineLoaded = false
+
+        this.timeline = {}
+        this.timeline.loaded = false
+        this.timeline.currentDot = {}
+        this.timeline.currentDot.mouseDownStatus = false
+
         this.galleryLoaded = false
         this.tagLineLoaded = false
 
-        // declare a object, passing by referrence
-        this.timelineCurrentDot = {}
-        this.timelineCurrentDot.mouseDownStatus = false
+        // this.timelineCurrentDot = {}
+        // this.timelineCurrentDot.mouseDownStatus = false
 
         // create audio element
         this.audio = document.createElement('audio')
@@ -84,10 +89,10 @@ export default class core {
                 }
 
                 // update timeline dot postation
-                if (this.timelineLoaded) {
+                if (this.timeline.loaded) {
                     timelinePlayProcess({
                         audio: this.audio,
-                        dot: this.timelineCurrentDot
+                        dot: this.timeline.currentDot
                     })
                 }
 
@@ -303,48 +308,13 @@ export default class core {
         return timer
     }
 
-    timeline ({ moveDotFunction, clickProcessbarFunction }) {
-        this.timelineLoaded = true
-
-        let progressBar = document.createElement('div')
-        progressBar.className = 'progress-bar'
-
-        this.timelineCurrentDot.dom = document.createElement('command')
-        this.timelineCurrentDot.dom.className = 'dot'
-
-        if (moveDotFunction === undefined) {
-            mouseMoveTimelineDot({
-                audio: this.audio,
-                dot: this.timelineCurrentDot,
-                progressBar: progressBar
-            })
-        } else {
-            moveDotFunction({
-                audio: this.audio,
-                dot: this.timelineCurrentDot,
-                progressBar: progressBar
-            })
-        }
-
-        if (clickProcessbarFunction === undefined) {
-            mouseClickProgressBar({
-                audio: this.audio,
-                dot: this.timelineCurrentDot,
-                progressBar: progressBar
-            })
-        } else {
-            clickProcessbarFunction({
-                audio: this.audio,
-                dot: this.timelineCurrentDot,
-                progressBar: progressBar
-            })
-        }
-
-        progressBar.appendChild(this.timelineCurrentDot.dom)
-
-        let timeline = {}
-        timeline.progressBar = progressBar
-        return timeline
+    timelineBuild ({ moveDotFunction, clickProcessbarFunction }) {
+        timelineInit({
+            audio: this.audio,
+            timeline: this.timeline,
+            moveDotFunction: moveDotFunction,
+            clickProcessbarFunction: clickProcessbarFunction
+        })
     }
 
     gallery ({ itemClass, activeClass }) {

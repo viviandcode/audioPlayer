@@ -1,44 +1,44 @@
-// structure timeline element
-export const timeline = ({ moveDotFunction, clickProcessbarFunction }) => {
-    this.timelineLoaded = true
+// init timeline structure
+export const timelineInit = ({ audio, timeline, moveDotFunction, clickProcessbarFunction }) => {
+    timeline.loaded = true
 
     let progressBar = document.createElement('div')
     progressBar.className = 'progress-bar'
 
-    this.timelineCurrentDot.dom = document.createElement('command')
-    this.timelineCurrentDot.dom.className = 'dot'
+    timeline.currentDot.dom = document.createElement('command')
+    timeline.currentDot.dom.className = 'dot'
 
     if (moveDotFunction === undefined) {
         mouseMoveTimelineDot({
-            audio: this.audio,
-            dot: this.timelineCurrentDot,
+            audio: audio,
+            dot: timeline.currentDot,
             progressBar: progressBar
         })
     } else {
         moveDotFunction({
-            audio: this.audio,
-            dot: this.timelineCurrentDot,
+            audio: audio,
+            dot: timeline.currentDot,
             progressBar: progressBar
         })
     }
 
     if (clickProcessbarFunction === undefined) {
         mouseClickProgressBar({
-            audio: this.audio,
-            dot: this.timelineCurrentDot,
+            audio: audio,
+            dot: timeline.currentDot,
             progressBar: progressBar
         })
     } else {
         clickProcessbarFunction({
-            audio: this.audio,
-            dot: this.timelineCurrentDot,
+            audio: audio,
+            dot: timeline.currentDot,
             progressBar: progressBar
         })
     }
 
-    progressBar.appendChild(this.timelineCurrentDot.dom)
+    progressBar.appendChild(timeline.currentDot.dom)
 
-    let timeline = {}
+    // let timeline = {}
     timeline.progressBar = progressBar
     return timeline
 }

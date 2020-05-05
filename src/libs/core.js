@@ -14,7 +14,7 @@ export default class core {
 
         // declare a object, passing by referrence
         this.timelineCurrentDot = {}
-        this.timelineCurrentDot.status = false
+        this.timelineCurrentDot.mouseDownStatus = false
 
         // create audio element
         this.audio = document.createElement('audio')
@@ -303,7 +303,7 @@ export default class core {
         return timer
     }
 
-    timeline ({ dotFunction, progressFunction }) {
+    timeline ({ moveDotFunction, clickProcessbarFunction }) {
         this.timelineLoaded = true
 
         let progressBar = document.createElement('div')
@@ -312,28 +312,28 @@ export default class core {
         this.timelineCurrentDot.dom = document.createElement('command')
         this.timelineCurrentDot.dom.className = 'dot'
 
-        if (dotFunction === undefined) {
+        if (moveDotFunction === undefined) {
             mouseMoveTimelineDot({
                 audio: this.audio,
                 dot: this.timelineCurrentDot,
                 progressBar: progressBar
             })
         } else {
-            dotFunction({
+            moveDotFunction({
                 audio: this.audio,
                 dot: this.timelineCurrentDot,
                 progressBar: progressBar
             })
         }
 
-        if (progressFunction === undefined) {
+        if (clickProcessbarFunction === undefined) {
             mouseClickProgressBar({
                 audio: this.audio,
                 dot: this.timelineCurrentDot,
                 progressBar: progressBar
             })
         } else {
-            progressFunction({
+            clickProcessbarFunction({
                 audio: this.audio,
                 dot: this.timelineCurrentDot,
                 progressBar: progressBar

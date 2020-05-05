@@ -1,6 +1,51 @@
+// structure timeline element
+export const timeline = ({ moveDotFunction, clickProcessbarFunction }) => {
+    this.timelineLoaded = true
+
+    let progressBar = document.createElement('div')
+    progressBar.className = 'progress-bar'
+
+    this.timelineCurrentDot.dom = document.createElement('command')
+    this.timelineCurrentDot.dom.className = 'dot'
+
+    if (moveDotFunction === undefined) {
+        mouseMoveTimelineDot({
+            audio: this.audio,
+            dot: this.timelineCurrentDot,
+            progressBar: progressBar
+        })
+    } else {
+        moveDotFunction({
+            audio: this.audio,
+            dot: this.timelineCurrentDot,
+            progressBar: progressBar
+        })
+    }
+
+    if (clickProcessbarFunction === undefined) {
+        mouseClickProgressBar({
+            audio: this.audio,
+            dot: this.timelineCurrentDot,
+            progressBar: progressBar
+        })
+    } else {
+        clickProcessbarFunction({
+            audio: this.audio,
+            dot: this.timelineCurrentDot,
+            progressBar: progressBar
+        })
+    }
+
+    progressBar.appendChild(this.timelineCurrentDot.dom)
+
+    let timeline = {}
+    timeline.progressBar = progressBar
+    return timeline
+}
+
 // audio playing process
 export const timelinePlayProcess = ({ audio, dot }) => {
-    if (!dot.status) {
+    if (!dot.mouseDownStatus) {
         let progressPer = audio.currentTime / audio.duration
         if (progressPer <= 1) {
             dot.dom.style.left = progressPer * 100 + '%'
@@ -14,19 +59,19 @@ export const timelinePlayProcess = ({ audio, dot }) => {
 export const mouseMoveTimelineDot = ({ audio, dot, progressBar }) => {
     let precessPer = 0
     dot.dom.addEventListener('mousedown', () => {
-        dot.status = true
+        dot.mouseDownStatus = true
     })
     document.addEventListener('mouseup', () => {
-        if (dot.status) {
+        if (dot.mouseDownStatus) {
             audio.currentTime = precessPer * audio.duration
             audio.play()
-            dot.status = false
+            dot.mouseDownStatus = false
 
         }
     })
     document.addEventListener('mousemove', e => {
-        if (dot.status) {
-            dot.status = true
+        if (dot.mouseDownStatus) {
+            dot.mouseDownStatus = true
 
             let currentX = e.clientX - progressBar.getBoundingClientRect().left
             precessPer = currentX / progressBar.offsetWidth

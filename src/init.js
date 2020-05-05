@@ -112,8 +112,8 @@ export default class player {
         this.timelineWrap.appendChild(this.timer.duration)
     }
 
-    timeline ({ dotFunction, progressFunction }) {
-        this.timeline = this.core.timeline({ dotFunction, progressFunction })
+    timeline ({ moveDotFunction, clickProcessbarFunction }) {
+        this.timeline = this.core.timeline({ moveDotFunction, clickProcessbarFunction })
         let timeline = document.createElement('div')
         timeline.className = 'timeline'
         timeline.appendChild(this.timeline.progressBar)

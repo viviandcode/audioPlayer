@@ -1,4 +1,5 @@
 import { timeFormat } from '../utils/timeFormat.js'
+import { playButtonInit } from './playButton.js'
 import { timerInit, timerPlayProcess } from './timer.js'
 import { timelineInit, timelinePlayProcess } from './timeline.js'
 import { galleryActive } from './gallery.js'
@@ -9,6 +10,9 @@ export default class core {
     constructor({ src, updateTime }) {
         // declare a object, passing by referrence
         // init modules load status
+        this.playButton = {}
+        this.playButton.dom = {}
+
         this.timer = {}
         this.timer.loaded = false
 
@@ -80,7 +84,7 @@ export default class core {
         let setIntervalObj
         this.audio.addEventListener('play', () => {
             // change play button icon
-            this.playButton.innerHTML = this.pauseIcon
+            this.playButton.dom.innerHTML = this.playButton.pauseIcon
 
             setIntervalObj = setInterval(() => {
                 // update timer
@@ -122,39 +126,19 @@ export default class core {
         }, false)
 
         this.audio.addEventListener('pause', () => {
-            this.playButton.innerHTML = this.playIcon
+            this.playButton.dom.innerHTML = this.playButton.playIcon
             clearInterval(setIntervalObj)
         })
     }
 
-    playButton ({ playIcon, pauseIcon, className }) {
-        if (playIcon === undefined || playIcon === '') {
-            this.playIcon = '&#9658'
-        } else {
-            this.playIcon = playIcon
-        }
-
-        if (pauseIcon === undefined || pauseIcon === '') {
-            this.pauseIcon = '&Iota;&Iota;'
-        } else {
-            this.pauseIcon = pauseIcon
-        }
-
-        this.playButton = document.createElement('button')
-        if (className === undefined || className === '') {
-            this.playButton.className = 'play-button'
-        } else {
-            this.playButton.className = className
-        }
-        this.playButton.innerHTML = this.playIcon
-        this.playButton.addEventListener('click', () => {
-            if (this.audio.paused) {
-                this.audio.play()
-            } else {
-                this.audio.pause()
-            }
+    playButtonBuild ({ playIcon, pauseIcon, className }) {
+        playButtonInit({
+            audio: this.audio,
+            playButton: this.playButton,
+            playIcon: playIcon,
+            pauseIcon: pauseIcon,
+            className: className
         })
-
         return this.playButton
     }
 

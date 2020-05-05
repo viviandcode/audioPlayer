@@ -1,3 +1,46 @@
+export const volumeInit = ({ audio, volumeIcon, muteIcon }) => {
+    let _volumeIcon = '&#9836'
+    if (volumeIcon !== undefined && volumeIcon !== '') {
+        _volumeIcon = volumeIcon
+    }
+    let _muteIcon = '&#9834'
+    if (muteIcon !== undefined && muteIcon !== '') {
+        _muteIcon = muteIcon
+    }
+
+    let progressBar = document.createElement('div')
+    progressBar.className = 'progress-bar'
+
+    let dot = document.createElement('command')
+    dot.className = 'dot'
+    dot.style.left = audio.volume * 100 + '%'
+
+    progressBar.appendChild(dot)
+
+    let audioButton = document.createElement('div')
+    audioButton.className = 'audio-button'
+    audioButton.innerHTML = _volumeIcon
+
+    audioButton.addEventListener('click', () => {
+        if (audio.muted) {
+            audio.muted = false
+            audioButton.innerHTML = _volumeIcon
+        } else {
+            audio.muted = true
+            audioButton.innerHTML = _muteIcon
+        }
+    })
+
+    mouseMoveVolumeDot(this.audio, dot, progressBar)
+    mouseClickVolumeProgressBar(this.audio, dot, progressBar)
+
+    let volumeController = {}
+    volumeController.progressBar = progressBar
+    // volumeController.dot = dot
+    volumeController.audioButton = audioButton
+    return volumeController
+}
+
 // mouse move dot
 export const mouseMoveVolumeDot = (audio, dot, progressBar) => {
     let mouseDownFlag = false

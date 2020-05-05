@@ -81,13 +81,13 @@ export default class player {
     }
 
     playButton ({ playIcon, pauseIcon, className }) {
-        this.playButton = this.core.playButton({ playIcon, pauseIcon, className })
-        this.playController.appendChild(this.playButton)
+        this.playButton = this.core.playButtonBuild({ playIcon, pauseIcon, className })
+        this.playController.appendChild(this.playButton.dom)
     }
 
     skipTimeButton ({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon }) {
         this.skipTimeButton = this.core.skipTimeButton({ skipTime, backward, backwardClass, backwardIcon, forward, forwardClass, forwardIcon })
-        this.playController.insertBefore(this.skipTimeButton.backwardButton, this.playButton)
+        this.playController.insertBefore(this.skipTimeButton.backwardButton, this.playButton.dom)
         this.playController.appendChild(this.skipTimeButton.forwardButton)
     }
 

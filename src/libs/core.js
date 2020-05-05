@@ -8,18 +8,20 @@ export default class core {
     constructor({ src, updateTime }) {
         // declare a object, passing by referrence
         // init modules load status
-        this.timerLoaded = false
+
+        this.timer = {}
+        this.timer.loaded = false
+        
+        // this.timerLoaded = false
 
         this.timeline = {}
         this.timeline.loaded = false
+        this.timeline.dom = {}
         this.timeline.currentDot = {}
         this.timeline.currentDot.mouseDownStatus = false
 
         this.galleryLoaded = false
         this.tagLineLoaded = false
-
-        // this.timelineCurrentDot = {}
-        // this.timelineCurrentDot.mouseDownStatus = false
 
         // create audio element
         this.audio = document.createElement('audio')
@@ -315,6 +317,7 @@ export default class core {
             moveDotFunction: moveDotFunction,
             clickProcessbarFunction: clickProcessbarFunction
         })
+        return this.timeline
     }
 
     gallery ({ itemClass, activeClass }) {

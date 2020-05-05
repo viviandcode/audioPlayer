@@ -37,10 +37,7 @@ export const timelineInit = ({ audio, timeline, moveDotFunction, clickProcessbar
     }
 
     progressBar.appendChild(timeline.currentDot.dom)
-
-    // let timeline = {}
-    timeline.progressBar = progressBar
-    return timeline
+    timeline.dom.progressBar = progressBar
 }
 
 // audio playing process

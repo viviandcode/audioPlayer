@@ -55,8 +55,8 @@ export default class player {
     }
 
     tagLine ({ tagItemClass, progressDistance }) {
-        this.tagLine = this.core.tagLine({ tagItemClass, progressDistance })
-        this.player.insertBefore(this.tagLine.wrap, this.controller)
+        this.tagLine = this.core.tagLineBuild({ tagItemClass, progressDistance })
+        this.player.insertBefore(this.tagLine.dom, this.controller)
     }
 
     customButton () {

@@ -1,4 +1,3 @@
-import { timeFormat } from '../utils/timeFormat.js'
 import { playButtonInit } from './playButton.js'
 import { skipTimeButtonInit } from './skipTimeButton.js'
 import { prevNextButtonInit } from './prevNextButton.js'
@@ -6,7 +5,7 @@ import { volumeInit } from './volume.js'
 import { timerInit, timerPlayProcess } from './timer.js'
 import { timelineInit, timelinePlayProcess } from './timeline.js'
 import { galleryInit, galleryActive } from './gallery.js'
-import { tagLineProgress, tagLineDrag } from './tagLine.js'
+import { tagLineInit, tagLineProgress } from './tagLine.js'
 
 export default class core {
     constructor({ src, updateTime }) {
@@ -27,7 +26,9 @@ export default class core {
         this.gallery = {}
         this.gallery.loaded = false
         
-        this.tagLineLoaded = false
+        this.tagLine = {}
+        this.tagLine.loaded = false
+        this.tagLine.dom = {}
 
         // create audio element
         this.audio = document.createElement('audio')
@@ -113,11 +114,10 @@ export default class core {
                 }
 
                 // tag line
-                if (this.tagLineLoaded) {
+                if (this.tagLine.loaded) {
                     tagLineProgress({
                         audio: this.audio,
-                        progressDistance: this.progressDistance,
-                        progress: this.progress
+                        tagLine: this.tagLine
                     })
                 }
             }, this.updateTime)
@@ -200,85 +200,15 @@ export default class core {
         return this.gallery  
     }
 
-    tagLine ({ tagItemClass, progressDistance }) {
-        if (this.data === undefined || this.data === '') {
-            console.error('no data!')
-            return false
-        }
-
-        this.tagLineLoaded = true
-
-        if (tagItemClass === undefined || tagItemClass === '') {
-            this.tagItemClass = 'item'
-        } else {
-            this.tagItemClass = tagItemClass
-        }
-
-        // default 1 ms = 1.6666666px
-        if (progressDistance === undefined || progressDistance === 0) {
-            this.progressDistance = 1.6666666666
-        } else {
-            this.progressDistance = progressDistance
-        }
-
-        let progressWrap = document.createElement('div')
-        progressWrap.className = 'progress-wrap'
-
-        this.progress = document.createElement('div')
-        this.progress.className = 'progress'
-
-        for (let index = 0; index < this.data.length; index++) {
-            let item = document.createElement('figure')
-            item.className = this.tagItemClass
-            item.setAttribute('time-point', this.data[index].timePoint)
-            item.setAttribute('style', 'left:' + this.data[index].timePoint * this.progressDistance + 'px')
-
-            let timeLine = document.createElement('div')
-            timeLine.className = 'time-line'
-
-            let title = document.createElement('div')
-            title.className = 'title'
-            title.innerText = this.data[index].title
-
-            let timeMark = document.createElement('div')
-            timeMark.className = 'time-mark'
-            timeMark.innerText = timeFormat(this.data[index].timePoint)
-
-            item.appendChild(timeLine)
-            item.appendChild(title)
-            item.appendChild(timeMark)
-
-            item.addEventListener('click', () => {
-                this.audio.currentTime = this.data[index].timePoint
-                this.audio.play()
-            })
-
-            this.progress.appendChild(item)
-        }
-
-        progressWrap.appendChild(this.progress)
-
-        let timePointLine = document.createElement('div')
-        timePointLine.className = 'time-point-line'
-
-        let wrap = document.createElement('div')
-        wrap.className = 'tag-line'
-        wrap.appendChild(timePointLine)
-        wrap.appendChild(progressWrap)
-
-        tagLineDrag({
-            tagLine: wrap,
+    tagLineBuild ({ tagItemClass, progressDistance }) {
+        tagLineInit({
             audio: this.audio,
-            progressDistance: this.progressDistance,
-            progress: this.progress
+            data: this.data,
+            tagLine: this.tagLine,
+            tagItemClass: tagItemClass,
+            progressDistance: progressDistance
         })
-
-        let tagLine = {}
-        tagLine.timePointLine = timePointLine
-        tagLine.progress = this.progress
-        tagLine.wrap = wrap
-
-        return tagLine
+        return this.tagLine
     }
 }
 

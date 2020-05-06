@@ -5,7 +5,7 @@ import { prevNextButtonInit } from './prevNextButton.js'
 import { volumeInit } from './volume.js'
 import { timerInit, timerPlayProcess } from './timer.js'
 import { timelineInit, timelinePlayProcess } from './timeline.js'
-import { galleryActive } from './gallery.js'
+import { galleryInit, galleryActive } from './gallery.js'
 import { tagLineProgress, tagLineDrag } from './tagLine.js'
 
 export default class core {
@@ -24,7 +24,9 @@ export default class core {
         this.timeline.currentDot = {}
         this.timeline.currentDot.mouseDownStatus = false
 
-        this.galleryLoaded = false
+        this.gallery = {}
+        this.gallery.loaded = false
+        
         this.tagLineLoaded = false
 
         // create audio element
@@ -70,13 +72,6 @@ export default class core {
         return this.audio.autoplay
     }
 
-    set volume (volume) {
-            this.audio.volume = volume
-    }
-    get volume () {
-        return this.audio.volume
-    }
-
     data (data) {
         this.data = data
     }
@@ -106,13 +101,14 @@ export default class core {
                 }
 
                 // gallery seek active item
-                if (this.galleryLoaded) {
-                    this.galleryIndex = galleryActive({
+                if (this.gallery.loaded) {
+                    galleryActive({
                         audio: this.audio,
-                        galleryItems: this.galleryItems,
-                        itemClass: this.galleryItemClass,
-                        activeClass: this.galleryActiveClass,
-                        galleryIndex: this.galleryIndex
+                        gallery: this.gallery,
+                        galleryItems: this.gallery.items,
+                        itemClass: this.gallery.itemClass,
+                        activeClass: this.gallery.activeClass,
+                        galleryIndex: this.gallery.index
                     })
                 }
 
@@ -194,71 +190,14 @@ export default class core {
         return this.timeline
     }
 
-    gallery ({ itemClass, activeClass }) {
-        if (this.data === undefined || this.data === '') {
-            console.error('no data!')
-            return false
-        }
-
-        this.galleryLoaded = true
-
-        if (itemClass === undefined || itemClass === '') {
-            this.galleryItemClass = 'gallery-item'
-        } else {
-            this.galleryItemClass = _temClass
-        }
-        if (activeClass === undefined || activeClass === '') {
-            this.galleryActiveClass = 'active'
-        } else {
-            this.galleryActiveClass = activeClass
-        }
-
-        let gallery = {}
-        gallery.items = []
-
-        for (let index = 0; index < this.data.length; index++) {
-            let galleryItem = document.createElement('figure')
-            galleryItem.className = this.galleryItemClass
-            galleryItem.setAttribute('time-point', this.data[index].timePoint)
-
-            let imgWrap = document.createElement('div')
-            imgWrap.className = 'img-wrap'
-
-            let img = document.createElement('div')
-            img.className = 'img'
-
-            let galleryImg = new Image()
-            galleryImg.setAttribute('src', this.data[index].imgUrl)
-
-            img.appendChild(galleryImg)
-            imgWrap.appendChild(img)
-
-            let contentWrap = document.createElement('div')
-            contentWrap.className = 'content-wrap'
-
-            let title = document.createElement('h3')
-            title.className = 'title'
-            title.innerText = this.data[index].title
-
-            let content = document.createElement('div')
-            content.className = 'content'
-            content.innerText = this.data[index].context
-
-            contentWrap.appendChild(title)
-            contentWrap.appendChild(content)
-
-            galleryItem.appendChild(imgWrap)
-            galleryItem.appendChild(contentWrap)
-
-            gallery.items.push(galleryItem)
-        }
-
-        // init gallery, default select first timepoint
-        this.galleryItems = gallery.items
-        this.galleryIndex = 0
-        this.galleryItems[this.galleryIndex].classList.add(this.galleryActiveClass)
-
-        return gallery  
+    galleryBuild ({ itemClass, activeClass }) {
+        galleryInit({
+            data: this.data,
+            gallery: this.gallery,
+            itemClass: itemClass,
+            activeClass: activeClass
+        })
+        return this.gallery  
     }
 
     tagLine ({ tagItemClass, progressDistance }) {

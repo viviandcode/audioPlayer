@@ -42,7 +42,7 @@ export default class player {
     }
 
     gallery ({ itemClass, activeClass }) {
-        this.gallery = this.core.gallery({ itemClass, activeClass })
+        this.gallery = this.core.galleryBuild({ itemClass, activeClass })
 
         let galleryWrap = document.createElement('div')
         galleryWrap.className = 'gallery-wrap'

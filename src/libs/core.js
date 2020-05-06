@@ -211,4 +211,3 @@ export default class core {
         return this.tagLine
     }
 }
-

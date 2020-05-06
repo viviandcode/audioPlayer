@@ -104,7 +104,11 @@ export const tagLineDrag = ({ audio, tagLine, wrap }) => {
             let timeOffset = - distance / tagLine.progressDistance
 
             // update audio time
-            audio.currentTime = audio.currentTime + timeOffset
+            if ((audio.currentTime + timeOffset) < audio.duration) {
+                audio.currentTime = audio.currentTime + timeOffset
+            } else {
+                audio.currentTime = audio.duration
+            }
             // update progress position
             tagLine.dom.querySelector('#progress').setAttribute('style', 'transform: translateX(-'+ audio.currentTime * tagLine.progressDistance +'px);')
         }

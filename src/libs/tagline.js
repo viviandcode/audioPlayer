@@ -101,10 +101,10 @@ export const tagLineDrag = ({ audio, tagLine, wrap }) => {
             // move distance slow down 100X
             let distance = (currentX - startX) / 100
 
-            let timeOffset = parseInt(Math.round(- distance / tagLine.progressDistance))
+            let timeOffset = - distance / tagLine.progressDistance
 
             // update audio time
-            audio.currentTime = parseInt(audio.currentTime + timeOffset)
+            audio.currentTime = audio.currentTime + timeOffset
             // update progress position
             tagLine.dom.querySelector('#progress').setAttribute('style', 'transform: translateX(-'+ audio.currentTime * tagLine.progressDistance +'px);')
         }

@@ -1,4 +1,5 @@
 import { timeFormat } from '../utils/timeFormat.js'
+import { userAgentDetective } from '../utils/userAgentDetective.js'
 
 export const tagLineInit = ({ audio, data, tagLine, tagItemClass, progressDistance }) => {
     if (data === undefined || data === '') {
@@ -79,38 +80,72 @@ export const tagLineProgress = ({ audio, tagLine }) => {
     tagLine.dom.querySelector('#progress').setAttribute('style', 'transform: translateX(-'+ audio.currentTime * tagLine.progressDistance +'px)')
 }
 
-export const tagLineDrag = ({ audio, tagLine, wrap }) => {
+export const tagLineDrag = ({ audio, tagLine }) => {
     let mouseDownFlag = false
     let startX
 
-    tagLine.dom.addEventListener('mousedown', e => {
-        mouseDownFlag = true
-        startX = e.clientX
-        audio.pause()
-    })
-    
-    document.addEventListener('mouseup', e => {
-        if (mouseDownFlag) {
-            audio.play()
-            mouseDownFlag = false
-        }
-    })
-    document.addEventListener('mousemove', e => {
-        if (mouseDownFlag) {
-            let currentX = e.clientX
-            // move distance slow down 100X
-            let distance = (currentX - startX) / 100
-
-            let timeOffset = - distance / tagLine.progressDistance
-
-            // update audio time
-            if ((audio.currentTime + timeOffset) < audio.duration) {
-                audio.currentTime = audio.currentTime + timeOffset
-            } else {
-                audio.currentTime = audio.duration
+    let u = userAgentDetective()
+    if (u.mobile) {
+        tagLine.dom.addEventListener('touchstart', e => {
+            mouseDownFlag = true
+            let touch = e.targetTouches[0]
+            startX = touch.clientX
+            audio.pause()
+        })
+        document.addEventListener('touchend', e => {
+            if (mouseDownFlag) {
+                audio.play()
+                mouseDownFlag = false
             }
-            // update progress position
-            tagLine.dom.querySelector('#progress').setAttribute('style', 'transform: translateX(-'+ audio.currentTime * tagLine.progressDistance +'px);')
-        }
-    })
+        })
+        document.addEventListener('touchmove', e => {
+            if (mouseDownFlag) {
+                let touch = e.targetTouches[0]
+                let currentX = touch.clientX
+                // move distance slow down 100X
+                let distance = (currentX - startX) / 100
+    
+                let timeOffset = - distance / tagLine.progressDistance
+    
+                // update audio time
+                if ((audio.currentTime + timeOffset) < audio.duration) {
+                    audio.currentTime = audio.currentTime + timeOffset
+                } else {
+                    audio.currentTime = audio.duration
+                }
+                // update progress position
+                tagLine.dom.querySelector('#progress').setAttribute('style', 'transform: translateX(-'+ audio.currentTime * tagLine.progressDistance +'px);')
+            }
+        })
+    } else {
+        tagLine.dom.addEventListener('mousedown', e => {
+            mouseDownFlag = true
+            startX = e.clientX
+            audio.pause()
+        })
+        document.addEventListener('mouseup', e => {
+            if (mouseDownFlag) {
+                audio.play()
+                mouseDownFlag = false
+            }
+        })
+        document.addEventListener('mousemove', e => {
+            if (mouseDownFlag) {
+                let currentX = e.clientX
+                // move distance slow down 100X
+                let distance = (currentX - startX) / 100
+    
+                let timeOffset = - distance / tagLine.progressDistance
+    
+                // update audio time
+                if ((audio.currentTime + timeOffset) < audio.duration) {
+                    audio.currentTime = audio.currentTime + timeOffset
+                } else {
+                    audio.currentTime = audio.duration
+                }
+                // update progress position
+                tagLine.dom.querySelector('#progress').setAttribute('style', 'transform: translateX(-'+ audio.currentTime * tagLine.progressDistance +'px);')
+            }
+        })
+    }
 }

@@ -197,7 +197,7 @@ export default class core {
             itemClass: itemClass,
             activeClass: activeClass
         })
-        return this.gallery  
+        return this.gallery
     }
 
     tagLineBuild ({ tagItemClass, progressDistance }) {

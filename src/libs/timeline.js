@@ -1,3 +1,5 @@
+import { userAgentDetective } from '../utils/userAgentDetective.js'
+
 // init timeline structure
 export const timelineInit = ({ audio, timeline, moveDotCustomFunction, clickProcessbarCustomFunction }) => {
     timeline.loaded = true
@@ -55,33 +57,65 @@ export const timelinePlayProcess = ({ audio, dot }) => {
 // mouse move timeline dot
 export const mouseMoveTimelineDot = ({ audio, dot, progressBar }) => {
     let precessPer = 0
-    dot.dom.addEventListener('mousedown', () => {
-        dot.mouseDownStatus = true
-    })
-    document.addEventListener('mouseup', () => {
-        if (dot.mouseDownStatus) {
-            audio.currentTime = precessPer * audio.duration
-            audio.play()
-            dot.mouseDownStatus = false
-
-        }
-    })
-    document.addEventListener('mousemove', e => {
-        if (dot.mouseDownStatus) {
+    let u = userAgentDetective()
+    if (u.mobile) {
+        dot.dom.addEventListener('touchstart', () => {
             dot.mouseDownStatus = true
-
-            let currentX = e.clientX - progressBar.getBoundingClientRect().left
-            precessPer = currentX / progressBar.offsetWidth
-
-            if (currentX < 0) {
-                dot.dom.style.left = "0%"
-            } else if (currentX > progressBar.offsetWidth) {
-                dot.dom.style.left = "100%"
-            } else {
-                dot.dom.style.left = precessPer * 100 + "%"
+        })
+        document.addEventListener('touchend', () => {
+            if (dot.mouseDownStatus) {
+                audio.currentTime = parseInt(precessPer * audio.duration)
+                audio.play()
+                dot.mouseDownStatus = false
+    
             }
-        }
-    })
+        })
+        document.addEventListener('touchmove', e => {
+            if (dot.mouseDownStatus) {
+                dot.mouseDownStatus = true
+    
+                let touch = e.targetTouches[0]
+
+                let currentX = touch.clientX - progressBar.getBoundingClientRect().left
+                precessPer = currentX / progressBar.offsetWidth
+                if (currentX < 0) {
+                    dot.dom.style.left = "0%"
+                } else if (currentX > progressBar.offsetWidth) {
+                    dot.dom.style.left = "100%"
+                } else {
+                    dot.dom.style.left = precessPer * 100 + "%"
+                }
+            }
+        }) 
+    } else {
+        dot.dom.addEventListener('mousedown', () => {
+            dot.mouseDownStatus = true
+        })
+        document.addEventListener('mouseup', () => {
+            if (dot.mouseDownStatus) {
+                audio.currentTime = precessPer * audio.duration
+                audio.play()
+                dot.mouseDownStatus = false
+    
+            }
+        })
+        document.addEventListener('mousemove', e => {
+            if (dot.mouseDownStatus) {
+                dot.mouseDownStatus = true
+    
+                let currentX = e.clientX - progressBar.getBoundingClientRect().left
+                precessPer = currentX / progressBar.offsetWidth
+    
+                if (currentX < 0) {
+                    dot.dom.style.left = "0%"
+                } else if (currentX > progressBar.offsetWidth) {
+                    dot.dom.style.left = "100%"
+                } else {
+                    dot.dom.style.left = precessPer * 100 + "%"
+                }
+            }
+        })   
+    }
 }
 
 // mouse click progress bar

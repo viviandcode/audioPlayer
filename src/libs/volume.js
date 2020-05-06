@@ -1,3 +1,5 @@
+import { userAgentDetective } from '../utils/userAgentDetective.js'
+
 export const volumeInit = ({ audio, volumeIcon, muteIcon }) => {
     let _volumeIcon = '&#9836'
     if (volumeIcon !== undefined && volumeIcon !== '') {
@@ -44,35 +46,70 @@ export const volumeInit = ({ audio, volumeIcon, muteIcon }) => {
 export const mouseMoveVolumeDot = (audio, dot, progressBar) => {
     let mouseDownFlag = false
 
-    dot.addEventListener('mousedown', () => {
-        mouseDownFlag = true
-    })
-    document.addEventListener('mouseup', () => {
-        mouseDownFlag = false
-    })
-    document.addEventListener('mousemove', e => {
-        if (mouseDownFlag) {
-            let currentX = e.clientX - progressBar.getBoundingClientRect().left
-            let per = currentX / progressBar.offsetWidth
+    let u = userAgentDetective()
+    if (u.mobile) {
+        dot.addEventListener('touchstart', () => {
+            mouseDownFlag = true
+        })
+        document.addEventListener('touchend', () => {
+            mouseDownFlag = false
+        })
+        document.addEventListener('touchmove', e => {
+            let touch = e.targetTouches[0]
 
-            if (currentX < 0) {
-                dot.style.left = "0%"
-            } else if (currentX > progressBar.offsetWidth) {
-                dot.style.left = "100%"
-            } else {
-                dot.style.left = per * 100 + "%"
+            if (mouseDownFlag) {
+                let currentX = touch.clientX - progressBar.getBoundingClientRect().left
+                let per = currentX / progressBar.offsetWidth
+    
+                if (currentX < 0) {
+                    dot.style.left = "0%"
+                } else if (currentX > progressBar.offsetWidth) {
+                    dot.style.left = "100%"
+                } else {
+                    dot.style.left = per * 100 + "%"
+                }
+    
+                // update audio volume
+                if (per < 0) {
+                    audio.volume = 0
+                } else if (per > 1) {
+                    audio.volume = 1
+                } else {
+                    audio.volume = per
+                }
             }
-
-            // update audio volume
-            if (per < 0) {
-                audio.volume = 0
-            } else if (per > 1) {
-                audio.volume = 1
-            } else {
-                audio.volume = per
+        })
+    } else {
+        dot.addEventListener('mousedown', () => {
+            mouseDownFlag = true
+        })
+        document.addEventListener('mouseup', () => {
+            mouseDownFlag = false
+        })
+        document.addEventListener('mousemove', e => {
+            if (mouseDownFlag) {
+                let currentX = e.clientX - progressBar.getBoundingClientRect().left
+                let per = currentX / progressBar.offsetWidth
+    
+                if (currentX < 0) {
+                    dot.style.left = "0%"
+                } else if (currentX > progressBar.offsetWidth) {
+                    dot.style.left = "100%"
+                } else {
+                    dot.style.left = per * 100 + "%"
+                }
+    
+                // update audio volume
+                if (per < 0) {
+                    audio.volume = 0
+                } else if (per > 1) {
+                    audio.volume = 1
+                } else {
+                    audio.volume = per
+                }
             }
-        }
-    })
+        })
+    }
 }
 
 // mouse click progress bar

@@ -18,6 +18,8 @@ html, body {
     display: flex;
     flex-direction: column;
     background-color: #282326;
+    width: 100%;
+    overflow: hidden;
     .gallery-wrap {
         flex: 1 0 300px;
         display: flex;
@@ -112,6 +114,9 @@ html, body {
     .controller {
         flex: 0 0 auto;
         display: flex;
+        @media screen and (max-width: 768px) {
+            flex-direction: column;
+        }
         justify-content: space-between;
         align-items: center;
         margin: 10px 30px;

@@ -67,14 +67,12 @@ export const tagLineInit = ({ audio, data, tagLine, tagItemClass, progressDistan
     wrap.appendChild(timePointLine)
     wrap.appendChild(progressWrap)
 
+    tagLine.dom = wrap
+
     tagLineDrag({
         audio: audio,
-        tagLine: tagLine,
-        wrap: wrap
+        tagLine: tagLine
     })
-
-    tagLine.timePointLine = timePointLine
-    tagLine.dom = wrap
 }
 
 export const tagLineProgress = ({ audio, tagLine }) => {
@@ -85,7 +83,7 @@ export const tagLineDrag = ({ audio, tagLine, wrap }) => {
     let mouseDownFlag = false
     let startX
 
-    wrap.addEventListener('mousedown', e => {
+    tagLine.dom.addEventListener('mousedown', e => {
         mouseDownFlag = true
         startX = e.clientX
         audio.pause()

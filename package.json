@@ -2,7 +2,8 @@
   "name": "audio-player",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": false,
+  "main": "dist/bundle.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "dev": "webpack-dev-server"

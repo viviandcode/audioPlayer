@@ -1,7 +1,7 @@
 // require('@babel/polyfill')
-import './styles/style.less'
-import player from "./init.js"
-import data from "./data.js"
+import './src/styles/style.less'
+import player from "./src/init.js"
+import data from "./src/data.js"
 
 const thePlayer = new player({
     id: 'podcast',

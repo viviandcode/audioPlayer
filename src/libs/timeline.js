@@ -60,6 +60,7 @@ export const mouseMoveTimelineDot = ({ audio, dot, progressBar }) => {
     let u = userAgentDetective()
     if (u.mobile) {
         dot.dom.addEventListener('touchstart', () => {
+            // event.preventDefault()
             dot.mouseDownStatus = true
         })
         document.addEventListener('touchend', () => {

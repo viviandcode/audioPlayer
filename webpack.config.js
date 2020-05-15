@@ -3,9 +3,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin') // 自动清除�
 const HtmlWebpackPlugin = require('html-webpack-plugin') // 自动生成 html 插件
 
 module.exports = {
-    entry: './src/index.js', //入口文件
+    entry: './index.js', //入口文件
     output: {
         filename: 'bundle.[hash].js', // 默认为main.js  [hash]是为了避免js缓存
+        // library: 'podcast-player', // 指定的就是你使用require时的模块名
         path: path.resolve(__dirname,'./dist') // path为绝对路径，用node path模块转化
     },
     mode: 'development', // 开发模式, 生产模式 'production' 会压缩代码
@@ -57,7 +58,7 @@ module.exports = {
     },
     plugins:[ // 存放插件
         new HtmlWebpackPlugin({
-            template: './src/index.html', // 模板
+            template: './index.html', // 模板
             filename: 'index.html', // 默认也是index.html
             minify: {
                 removeAttributeQuotes: true, // 删除标签属性的双引号

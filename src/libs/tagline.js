@@ -103,7 +103,7 @@ export const tagLineDrag = ({ audio, tagLine }) => {
                 let touch = e.targetTouches[0]
                 let currentX = touch.clientX
                 // move distance slow down 100X
-                let distance = (currentX - startX) / 100
+                let distance = (currentX - startX) / 60
     
                 let timeOffset = - distance / tagLine.progressDistance
     
